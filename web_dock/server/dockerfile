@@ -1,0 +1,20 @@
+# server/Dockerfile
+
+# ใช้ Node.js 14 เป็น base image
+FROM node:16
+
+# กำหนด working directory ใน container
+WORKDIR /usr/src/app
+
+# คัดลอกและติดตั้ง dependencies
+COPY package*.json ./
+RUN npm install
+
+# คัดลอกทั้งหมดไปยัง working directory
+COPY . .
+
+# กำหนด port ที่ container จะทำการ listen
+EXPOSE 8080
+
+# รัน app
+CMD [ "node", "server.js" ]

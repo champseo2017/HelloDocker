@@ -1,0 +1,26 @@
+# docker-compose.yml
+version: "3.8"
+services:
+  web:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: web_server:latest
+    container_name: web_server-container
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: always
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: web_server_nginx:latest
+    container_name: web_server_nginx-container
+    ports:
+      - "80:80"
+    depends_on:
+      - web
