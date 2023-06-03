@@ -1,0 +1,14 @@
+FROM php:8.0-fpm-alpine
+
+# ติดตั้ง dependencies ที่จำเป็น
+RUN apk add --no-cache \
+    zlib-dev \
+    libzip-dev \
+    && docker-php-ext-install zip
+
+# ก๊อปปี้โค้ด PHP ของคุณไปยังโฟลเดอร์เริ่มต้นของ PHP-FPM
+COPY . /var/www/html
+
+# กำหนดค่าที่เกี่ยวข้องกับ PHP-FPM
+WORKDIR /var/www/html
+CMD ["php-fpm"]
