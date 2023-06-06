@@ -21,9 +21,21 @@ services:
     image: web_server_php:latest
     container_name: web_server_php-container
     # ports:
-    #   - "8081:9000"
+    #   - "8081:8081"
     volumes:
       - ./serverphp:/var/www/html
+    restart: always
+
+  db:
+    image: mariadb:latest
+    container_name: mariadb_container
+    volumes:
+      - ./mariadb/data/:/var/lib/mysql
+      - ./mariadb/init/:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_DATABASE: exampledb
     restart: always
 
   portainer:
