@@ -1,0 +1,39 @@
+version: "3"
+services:
+  email_rpc:
+    container_name: email_rpc
+    build:
+      context: ./app
+      dockerfile: dockerfile.dev
+    environment:
+      - NODE_ENV=dev
+    restart: always
+    networks:
+      - microservice_network
+      - default
+    volumes:
+      - ./app:/app
+      - node_modules:/app/node_modules
+
+  smtp:
+    container_name: email_smtp
+    image: bytemark/smtp
+    restart: always
+    environment:
+      RELAY_HOST: smtp.gmail.com
+      RELAY_PORT: 587
+      RELAY_USERNAME: ${RELAY_USERNAME}
+      RELAY_PASSWORD: ${RELAY_PASSWORD}
+    networks:
+      - microservice_network
+
+networks:
+  default:
+    name: microservice_network
+    external: true
+  microservice_network:
+    name: microservice_network
+    external: true
+
+volumes:
+  node_modules:

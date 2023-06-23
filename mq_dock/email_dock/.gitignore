@@ -1,0 +1,4 @@
+# .gitignore
+app/node_modules/
+app/.env
+*.env

@@ -1,0 +1,15 @@
+# Development stage
+FROM node:16-alpine AS dev
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install --only=dev
+
+# ติดตั้ง nodemon
+RUN npm install -g nodemon
+
+COPY . .
+
+CMD ["npm", "run", "dev"]
