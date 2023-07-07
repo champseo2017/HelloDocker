@@ -4,7 +4,7 @@ export const displayStatus = (res: Response, statusCode: number, message: string
   const responseData = {
     status: statusCode,
     message: message,
-    data: data,
+    data: data ?? null,
   };
 
   res.status(statusCode).json(responseData);

@@ -4,4 +4,9 @@ interface IUserReg {
   role?: "user" | "admin";
 }
 
-export type { IUserReg };
+interface IUserLogin {
+  username?: string;
+  password?: string;
+}
+
+export type { IUserReg, IUserLogin };

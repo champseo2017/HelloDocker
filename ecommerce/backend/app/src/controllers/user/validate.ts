@@ -1,18 +1,20 @@
 import { Request, Response, NextFunction } from "express";
 import { displayStatus } from "@utils/displayStatus";
 import * as yup from "yup";
-import { IUserReg } from "@type/validates";
+import { IUserReg, IUserLogin } from "@type/validates";
 
 /**
  * User registration schema using Yup.
  * Validates the request body fields for username, password, and role.
  */
 export const userRegSchema = yup.object().shape({
-  body: yup.object<IUserReg>({
-    username: yup.string().required("Username is required"),
-    password: yup.string().required("Password is required"),
-    role: yup.string().oneOf(["user", "admin"]).default("user"),
-  }).defined(),
+  body: yup
+    .object<IUserReg>({
+      username: yup.string().required("Username is required"),
+      password: yup.string().required("Password is required"),
+      role: yup.string().oneOf(["user", "admin"]).default("user"),
+    })
+    .defined(),
 });
 
 /**
@@ -23,6 +25,37 @@ export const userRegSchema = yup.object().shape({
  */
 export const validateUserReg =
   (schema: yup.ObjectSchema<{ body: IUserReg }>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { body } = req;
+    try {
+      await schema.validate({ body });
+      return next();
+    } catch (error) {
+      displayStatus(res, 401, error?.message);
+    }
+  };
+
+/**
+ * User login schema using Yup.
+ * Validates the request body fields for username and password.
+ */
+export const userLoginSchema = yup.object().shape({
+  body: yup
+    .object<IUserLogin>({
+      username: yup.string().required("Username is required"),
+      password: yup.string().required("Password is required"),
+    })
+    .defined(),
+});
+
+/**
+ * Middleware function to validate user login.
+ * Uses the provided schema to validate the request body.
+ * If the validation fails, it returns an error response.
+ * If the validation passes, it calls the next middleware in the chain.
+ */
+export const validateUserLogin =
+  (schema: yup.ObjectSchema<{ body: IUserLogin }>) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const { body } = req;
     try {

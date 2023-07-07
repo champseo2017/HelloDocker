@@ -6,4 +6,11 @@ interface IRegisterRequest {
   };
 }
 
-export type { IRegisterRequest };
+interface ILoginRequest {
+  body: {
+    username?: string;
+    password?: string;
+  }
+}
+
+export type { IRegisterRequest, ILoginRequest };
