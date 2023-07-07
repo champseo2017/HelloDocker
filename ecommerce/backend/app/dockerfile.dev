@@ -1,0 +1,17 @@
+# Node.js Dockerfile
+FROM node:16-alpine
+
+WORKDIR /app
+
+# First, copy the package.json and package-lock.json
+COPY package*.json ./
+
+# Then, install dependencies and global packages
+RUN npm install
+RUN npm install -g nodemon ts-node
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["npm", "run", "dev"]

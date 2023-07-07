@@ -1,0 +1,36 @@
+version: '3'
+services:
+  backend:
+    container_name: ecommerce_backend
+    build: 
+      context: ./app
+      dockerfile: dockerfile.dev
+    environment:
+      - NODE_ENV=dev
+    restart: always
+    # ports:
+    #   - 8000:8000
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - 27017:27017
+
+  nginx:
+    container_name: nginx_server
+    build: 
+      context: ./nginx
+    ports:
+      - 8000:80
+    depends_on:
+      - backend
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+volumes:
+  mongodb_data:
