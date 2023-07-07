@@ -1,6 +1,7 @@
 import express from 'express';
-import connectDB from './config/db';
+import connectDB from '@config/db';
 import router from './routes';
+import { getHome } from '@controllers/home';
 
 const app = express();
 const port = 8000;
@@ -9,7 +10,8 @@ const port = 8000;
 connectDB();
 
 // Use router
-app.use('/', router);
+app.use('/', getHome);
+app.use('/api/v1', router);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
