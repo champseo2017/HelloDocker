@@ -10,15 +10,16 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./",
     "paths": {
-      "@models/*": ["src/models/*"], 
-      "@controllers/*": ["src/controllers/*"], 
-      "@config/*": ["src/config/*"], 
-      "@utils/*": ["src/utils/*"], 
+      "@models/*": ["src/models/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@config/*": ["src/config/*"],
+      "@utils/*": ["src/utils/*"],
       "@middlewares/*": ["src/middlewares/*"],
-      "@routes/*": ["src/routes/*"], 
-      "types/*": ["src/types/*"] 
+      "@routes/*": ["src/routes/*"],
+      "@type/*": ["src/type/*"]
     },
+    "types": ["express"]
   },
-  "include": ["**/*.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
