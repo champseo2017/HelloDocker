@@ -1,7 +1,11 @@
-import express from 'express';
-import { getHome } from '@controllers/home';
+import express from "express";
+import {
+  registerUser,
+  validateUserReg,
+  userRegSchema,
+} from "@controllers/user";
 
 const userRoutes = express.Router();
-userRoutes.post('/reg', getHome);
+userRoutes.post("/reg", validateUserReg(userRegSchema), registerUser);
 
 export { userRoutes };

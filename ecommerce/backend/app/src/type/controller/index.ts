@@ -1,8 +1,8 @@
-interface RegisterRequest {
+interface IRegisterRequest {
   body: {
     username: string;
     password: string;
   };
 }
 
-export type { RegisterRequest };
+export type { IRegisterRequest };

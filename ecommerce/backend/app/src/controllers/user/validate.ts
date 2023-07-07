@@ -1,17 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import { displayStatus } from "@utils/displayStatus";
 import * as yup from "yup";
+import { IUserReg } from "@type/validates";
 
 /**
  * User registration schema using Yup.
  * Validates the request body fields for username, password, and role.
  */
 export const userRegSchema = yup.object().shape({
-  body: yup.object({
+  body: yup.object<IUserReg>({
     username: yup.string().required("Username is required"),
     password: yup.string().required("Password is required"),
     role: yup.string().oneOf(["user", "admin"]).default("user"),
-  })
+  }).defined(),
 });
 
 /**
@@ -21,14 +22,11 @@ export const userRegSchema = yup.object().shape({
  * If the validation passes, it calls the next middleware in the chain.
  */
 export const validateUserReg =
-  (schema: yup.ObjectSchema<any>) => async (req: Request, res: Response, next: NextFunction) => {
-    const { body, query, params } = req;
+  (schema: yup.ObjectSchema<{ body: IUserReg }>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { body } = req;
     try {
-      await schema.validate({
-        body: body,
-        query: query,
-        params: params,
-      });
+      await schema.validate({ body });
       return next();
     } catch (error) {
       displayStatus(res, 401, error?.message);
