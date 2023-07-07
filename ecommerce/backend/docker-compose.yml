@@ -13,8 +13,11 @@ services:
     volumes:
       - ./app:/app
       - node_modules:/app/node_modules
+
     depends_on:
       - mongodb
+    # command: >
+    #   sh -c "cd /app && npm install && npm audit fix --force && npm run dev"
 
   mongodb:
     image: mongo
