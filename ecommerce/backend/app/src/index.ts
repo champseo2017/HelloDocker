@@ -1,15 +1,16 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import connectDB from './config/db';
+import router from './routes';
 
 const app = express();
 const port = 8000;
 
-mongoose.connect('mongodb://mongodb:27017/ecommerce');
+// Connect to MongoDB
+connectDB();
 
-app.get('/', (req, res) => {
-  res.send('Hello World! ggwp')
-});
+// Use router
+app.use('/', router);
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`)
+  console.log(`Server running at http://localhost:${port}`);
 });

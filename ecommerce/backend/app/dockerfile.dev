@@ -7,8 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Then, install dependencies and global packages
-RUN npm install
-RUN npm install -g nodemon ts-node
+RUN npm install -g nodemon ts-node ts-node-dev
 
 COPY . .
 
