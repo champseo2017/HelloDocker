@@ -5,6 +5,8 @@ interface IUser extends Document {
   password: string;
   cart: [string];
   role: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface IProduct extends Document {
@@ -12,6 +14,9 @@ interface IProduct extends Document {
   price: number;
   description: string;
   quantity: number;
+  imageUrls: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type { IUser, IProduct };

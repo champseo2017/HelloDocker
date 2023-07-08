@@ -9,4 +9,11 @@ interface IUserLogin {
   password?: string;
 }
 
-export type { IUserReg, IUserLogin };
+interface IProductValid {
+  name?: string;
+  price?: number;
+  description?: string;
+  quantity?: number;
+}
+
+export type { IUserReg, IUserLogin, IProductValid };
