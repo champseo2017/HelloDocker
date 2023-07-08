@@ -1,7 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { displayStatus } from "@utils/displayStatus";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { User } from "@models/user";
 import { IRegisterRequest, ILoginRequest } from "@type/controller";
 import { removeUnwantedFields } from "@utils/removeUnwantedFields";

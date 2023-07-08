@@ -1,5 +1,5 @@
 import { Document, Schema, model } from "mongoose";
-import { IProduct } from "types/models";
+import { IProduct } from "@type/models";
 
 const ProductSchema: Schema = new Schema(
   {
