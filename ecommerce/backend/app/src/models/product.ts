@@ -7,6 +7,7 @@ const ProductSchema: Schema = new Schema(
     price: { type: Number, required: true },
     description: { type: String },
     quantity: { type: Number, default: 0 },
+    imageUrls: { type: [String] },
   },
   {
     timestamps: true,

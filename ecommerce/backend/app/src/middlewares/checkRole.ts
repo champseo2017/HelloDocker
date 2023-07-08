@@ -18,6 +18,7 @@ export const checkRole = (role: string) => {
       }
 
       req.user = decoded;
+      console.log("decoded", decoded)
       next();
     } catch (error) {
       displayStatus(res, 401, "Token is not valid or expired");

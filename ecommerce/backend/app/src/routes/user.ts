@@ -1,14 +1,14 @@
-import express from "express";
+import { Router } from "express";
 import {
   registerUser,
   validateUserReg,
   userRegSchema,
   userLoginSchema,
   validateUserLogin,
-  loginUser
+  loginUser,
 } from "@controllers/user";
 
-const userRoutes = express.Router();
+const userRoutes = Router();
 userRoutes.post("/reg", validateUserReg(userRegSchema), registerUser);
 userRoutes.post("/login", validateUserLogin(userLoginSchema), loginUser);
 
