@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: my_mariadb
+    restart: always
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - 3306:3306
