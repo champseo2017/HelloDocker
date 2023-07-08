@@ -1,15 +1,19 @@
-import { Express, urlencoded, json } from "express";
+import express, { Express, urlencoded, json } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import helmet from "helmet";
+import path from 'path';
 
 dotenv.config();
 const url = process.env.URL_DEV;
 const allowedOrigins = [url];
 
 const middlewaresConfig = (app: Express) => {
+  // Serve static files from the "uploads" directory
+  app.use('/uploads', express.static(path.join(__dirname, '../controllers/product/uploads')));
+
   app.use(urlencoded({ extended: true }));
   app.use(json());
   app.use(cookieParser());

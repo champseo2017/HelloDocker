@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { checkRole } from "@middlewares/checkRole";
 import { verifyToken } from "@middlewares/verifyToken";
-import { validateAddProduct, productAddSchema } from "@controllers/product";
+import {
+  validateAddProduct,
+  productAddSchema,
+  addProduct,
+} from "@controllers/product";
 import { upload, errorHandlerUpload } from "@middlewares/uploadProImage";
 
 const productRoutes = Router();
@@ -12,6 +16,7 @@ productRoutes.post(
   upload,
   errorHandlerUpload,
   validateAddProduct(productAddSchema),
+  addProduct
 );
 
 export { productRoutes };

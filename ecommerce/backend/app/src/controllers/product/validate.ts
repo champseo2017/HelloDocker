@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { IProductValid } from "@type/validates";
 import { convertToNumber } from "@utils/convertToNumberAddPro";
 import { checkProductImages } from "@utils/checkProductImages";
-import { deleteUploadedFiles } from "@utils/deleteUploadedFiles";
+import { handleFilesInRequest } from "@utils/handleFilesInRequest";
 
 /**
  * Define product validation schema using Yup
@@ -39,10 +39,7 @@ export const validateAddProduct =
       await schema.validate({ body: req.body });
       return next();
     } catch (error) {
-      if (req.files && Object.keys(req.files).length > 0) {
-        const files = Object.values(req.files);
-        deleteUploadedFiles(files);
-      }
+      handleFilesInRequest(req)
       displayStatus(res, 400, error?.message);
     }
   };
