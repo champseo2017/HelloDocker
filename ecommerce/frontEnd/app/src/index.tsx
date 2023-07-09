@@ -1,10 +1,12 @@
-import {Fragment} from "react";
-import { createRoot } from 'react-dom/client';
+import "styles/index.css";
+import App from "components/App";
+import { Fragment } from "react";
+import { createRoot } from "react-dom/client";
 
-const element = document.getElementById('root');
+const element = document.getElementById("root");
 const root = createRoot(element!);
 root.render(
   <Fragment>
-    <p>Hello GGwp</p>
+    <App />
   </Fragment>
 );

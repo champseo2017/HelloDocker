@@ -7,8 +7,8 @@ import helmet from "helmet";
 import path from 'path';
 
 dotenv.config();
-const url = process.env.URL_DEV;
-const allowedOrigins = [url];
+const urlFrontEnd = process.env.URL_FRONT_END;
+const allowedOrigins = [urlFrontEnd];
 
 const middlewaresConfig = (app: Express) => {
   // Serve static files from the "uploads" directory
