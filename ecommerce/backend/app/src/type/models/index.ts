@@ -9,14 +9,19 @@ interface IUser extends Document {
   updatedAt?: Date;
 }
 
+interface IImageObject {
+  position: number;
+  url: string;
+}
+
 interface IProduct extends Document {
   name: string;
   price: number;
   description: string;
   quantity: number;
-  imageUrls: string[];
+  imagePaths: IImageObject[];
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export type { IUser, IProduct };
+export type { IUser, IProduct, IImageObject };

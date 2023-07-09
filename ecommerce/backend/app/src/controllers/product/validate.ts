@@ -5,6 +5,7 @@ import { IProductValid } from "@type/validates";
 import { convertToNumber } from "@utils/convertToNumberAddPro";
 import { checkProductImages } from "@utils/checkProductImages";
 import { handleFilesInRequest } from "@utils/handleFilesInRequest";
+import { displayErrorStatus } from "@utils/displayErrorStatus";
 
 /**
  * Define product validation schema using Yup
@@ -18,7 +19,7 @@ export const productAddSchema = yup.object().shape({
       description: yup
         .string()
         .max(250, "Description should not exceed 250 characters"),
-      quantity: yup.number().positive(),
+      quantity: yup.number().min(0).integer().required(),
     })
     .defined(),
 });
@@ -34,12 +35,54 @@ export const validateAddProduct =
   (schema: yup.ObjectSchema<{ body: IProductValid }>) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      req.body = convertToNumber(req.body);
       checkProductImages(req.body.productImages);
       await schema.validate({ body: req.body });
       return next();
     } catch (error) {
-      handleFilesInRequest(req)
+      handleFilesInRequest(req);
+      displayStatus(res, 400, error?.message);
+    }
+  };
+
+/**
+ * Define product validation schema using Yup
+ * Validates the request body fields for a update product
+ */
+export const productUpdateSchema = yup.object().shape({
+  body: yup
+    .object<IProductValid>({
+      id: yup
+        .string()
+        .required()
+        .matches(/^[0-9a-fA-F]{24}$/, "Invalid product ID"),
+      name: yup.string().required("Product name is required"),
+      price: yup.number().required("Product price is required").positive(),
+      description: yup
+        .string()
+        .max(250, "Description should not exceed 250 characters"),
+      quantity: yup.number().min(0).integer().required(),
+      positionImage: yup
+      .array()
+      .of(
+        yup.object({
+          position: yup.number().min(0).integer().required(),
+        })
+      )
+      .min(1),
+    })
+    .defined(),
+});
+
+export const validateUpdateProduct =
+  (schema: yup.ObjectSchema<{ body: IProductValid }>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // req.body = convertToNumber(req.body);
+      console.log("req.body", req.body)
+      await schema.validate({ body: req.body });
+      return next();
+    } catch (error) {
+      handleFilesInRequest(req);
       displayStatus(res, 400, error?.message);
     }
   };

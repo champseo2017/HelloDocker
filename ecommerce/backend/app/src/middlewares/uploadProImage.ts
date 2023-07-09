@@ -3,7 +3,9 @@ import { Request, Response, NextFunction } from "express";
 import multer, { MulterError } from "multer";
 import path from "path";
 import fs from "fs";
-import { errorCodeFileFilter } from "@type/middlewares";
+import { errorCode, errorCodeFileFilter } from "@type/middlewares";
+import { createCustomError } from "@utils/createCustomError";
+import { displayErrorStatus } from "@utils/displayErrorStatus";
 
 // Configure multer storage
 export const storage = multer.diskStorage({
@@ -32,46 +34,47 @@ const fileFilter = (req, file, cb) => {
   // Accept images only
   if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
     // You can define your error here:
-    const error: errorCodeFileFilter = new Error("Only image files are allowed!");
+    const error: errorCodeFileFilter = new Error(
+      "Only image files are allowed!"
+    );
     error.code = "INVALID_FILE_TYPE";
     return cb(error, false);
   }
   cb(null, true);
 };
 
-export const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB
-    files: 4 // maximum 4 files
-  },
-}).array("productImages", 4);
+export const upload = (maxFiles = 4) => {
+  return multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB
+      files: maxFiles,
+    },
+  }).array("productImages", maxFiles);
+};
 
 // Middleware errorHandlerUpload
-export const errorHandlerUpload = (
-  err: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    if (err instanceof MulterError) {
-      if (err.code === "LIMIT_FILE_SIZE") {
-        const error = new Error("File size exceeds the limit.");
-        displayStatus(res, 400, error.message);
-      } else if (err.code === "LIMIT_UNEXPECTED_FILE" || err.code === "LIMIT_FILE_COUNT") {
-        const error = new Error("Too many files uploaded. Maximum is 4.");
-        displayStatus(res, 400, error.message);
+export const errorHandlerUpload = (maxFiles = 4) => {
+  return (err: any, req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (err instanceof MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          createCustomError("File size exceeds the limit.", 400);
+        } else if (
+          err.code === "LIMIT_UNEXPECTED_FILE" ||
+          err.code === "LIMIT_FILE_COUNT"
+        ) {
+          createCustomError(`Too many files uploaded. Maximum is ${maxFiles}.`, 400);
+        }
+      } else if (err.code === "INVALID_FILE_TYPE") {
+        createCustomError(err.message, 400);
+      } else {
+        // Call next() if no error occurred
+        next();
       }
-    } else if (err.code === "INVALID_FILE_TYPE") {
-      displayStatus(res, 400, "Invalid file type");
-    } else {
-      // Call next() if no error occurred
-      next();
+    } catch (error) {
+      displayErrorStatus(res, error);
     }
-  } catch (error) {
-    // Handle any other errors
-    displayStatus(res, 500, "Internal Server Error");
-  }
+  };
 };

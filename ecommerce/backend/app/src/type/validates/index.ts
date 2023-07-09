@@ -14,6 +14,8 @@ interface IProductValid {
   price?: number;
   description?: string;
   quantity?: number;
+  id?: string;
+  positionImage?: { position: number }[];
 }
 
 export type { IUserReg, IUserLogin, IProductValid };

@@ -12,8 +12,12 @@ interface IRequestUser extends Request {
   user?: ITokenPayload;
 }
 
+interface errorCode extends Error {
+  code?: number;
+}
+
 interface errorCodeFileFilter extends Error {
   code?: string;
 }
 
-export type { IRequestUser, ITokenPayload, errorCodeFileFilter };
+export type { IRequestUser, ITokenPayload, errorCode, errorCodeFileFilter };

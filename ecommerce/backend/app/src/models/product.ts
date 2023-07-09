@@ -1,13 +1,21 @@
 import { Document, Schema, model, Model } from "mongoose";
 import { IProduct } from "@type/models";
 
+const ImageObjectSchema = new Schema(
+  {
+    position: { type: Number, required: true },
+    url: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 const ProductSchema: Schema = new Schema(
   {
     name: { type: String, required: true, unique: true },
     price: { type: Number, required: true },
     description: { type: String },
     quantity: { type: Number, default: 0 },
-    imagePaths: { type: [String] },
+    imagePaths: { type: [ImageObjectSchema], default: [] },
   },
   {
     timestamps: true,
