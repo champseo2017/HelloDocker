@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  app:
+    container_name: ecommerce_frontEnd
+    build: 
+      context: ./app
+      dockerfile: dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./app:/app
+    # ports:
+    #   - 3000:3000
+
+  nginx:
+    restart: always
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - 3000:80
+    depends_on:
+      - app
+
+volumes:
+  node_modules:
