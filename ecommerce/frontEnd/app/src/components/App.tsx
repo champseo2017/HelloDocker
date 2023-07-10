@@ -1,5 +1,11 @@
+import Main from "./Main";
+
 const App = () => {
-  return <div className="text-lg">App</div>;
+  return (
+    <>
+      <Main />
+    </>
+  );
 };
 
 export default App;
