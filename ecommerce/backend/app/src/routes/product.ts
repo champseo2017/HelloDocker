@@ -13,7 +13,10 @@ import {
   getListProduct,
   deleteProductSchema,
   validateDeleteProduct,
-  deleteProduct
+  deleteProduct,
+  findProductSchema,
+  validateFindProduct,
+  findProductById
 } from "@controllers/product";
 import { upload, errorHandlerUpload } from "@middlewares/uploadProImage";
 import { convertBodyTypes } from "@utils/convertBodyTypes";
@@ -58,6 +61,12 @@ productRoutes.delete(
   checkRole("admin"),
   validateDeleteProduct(deleteProductSchema),
   deleteProduct
+);
+
+productRoutes.get(
+  "/:id",
+  validateFindProduct(findProductSchema),
+  findProductById,
 );
 
 export { productRoutes };

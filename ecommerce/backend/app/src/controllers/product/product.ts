@@ -64,14 +64,14 @@ export const updateProduct = async (
         if (
           req.body.positionImage &&
           req.body.positionImage[index] &&
-          req.body.positionImage[index].position
+          typeof req.body.positionImage[index].position === 'number'
         ) {
           return {
             position: req.body.positionImage[index].position,
             url: publicUrl,
           };
         } else {
-          return { position: product.imagePaths.length + 1, url: publicUrl };
+          return { position: product.imagePaths.length, url: publicUrl };
         }
       });
 
@@ -92,7 +92,7 @@ export const updateProduct = async (
           const position = positionObject.position;
 
           // Check if position is valid
-          if (position < 1 || position > product.imagePaths.length + 1) {
+          if (position < 0 || position > product.imagePaths.length) {
             createCustomError("Invalid image position.", 400);
           }
 
@@ -101,13 +101,13 @@ export const updateProduct = async (
           const shiftedImagePath: IImageObject | undefined = imagePaths.shift();
           if (shiftedImagePath) {
             if (
-              position - 1 < product.imagePaths.length &&
-              product.imagePaths[position - 1]
+              position < product.imagePaths.length &&
+              product.imagePaths[position]
             ) {
-              product.imagePaths[position - 1] = shiftedImagePath;
+              product.imagePaths[position] = shiftedImagePath;
             } else {
               // If no image path at the position, add the image
-              product.imagePaths.splice(position - 1, 0, shiftedImagePath);
+              product.imagePaths.splice(position, 0, shiftedImagePath);
             }
           } else {
             createCustomError(
@@ -123,7 +123,7 @@ export const updateProduct = async (
         const position = positionObject.position;
 
         // Check if position is valid
-        if (position < 1 || position > product.imagePaths.length) {
+        if (position < 0 || position >= product.imagePaths.length) {
           createCustomError("Invalid image position.", 400);
         }
 
@@ -136,7 +136,7 @@ export const updateProduct = async (
         }
 
         // Delete the image file
-        const filePath = urlToFilePath(product.imagePaths[position - 1]?.url);
+        const filePath = urlToFilePath(product.imagePaths[position]?.url);
         try {
           await unlinkAsync(filePath);
         } catch (error) {
@@ -144,7 +144,7 @@ export const updateProduct = async (
         }
 
         // Delete the image path at the position
-        product.imagePaths.splice(position - 1, 1);
+        product.imagePaths.splice(position, 1);
       }
     }
 
@@ -157,27 +157,35 @@ export const updateProduct = async (
     delete updatedData.positionImage;
 
     // Update the product in the database
-    await Product.findByIdAndUpdate(req.body.id, updatedData, { new: true });
+    // await Product.findOneAndUpdate({ _id: req.body.id }, updatedData, { new: true });
+
+    // Update the product properties
+    product.set(updatedData);
+    await product.save();
 
     displayStatus(res, 200, "Product successfully updated", updatedData);
   } catch (error) {
+    console.log('error', error)
     handleFilesInRequest(req);
     displayErrorStatus(res, error);
   }
 };
 
+
 export const getListProduct = async (req, res, next) => {
-  const { page = 1, limit = 10, sort = '-createdAt' } = req.query;
+  const { page = 1, limit = 10, sort = "-createdAt" } = req.query;
 
   try {
     const products = await Product.find()
       .sort(sort)
       .limit(limit)
-      .skip((page - 1) * limit)
+      .skip((page - 1) * limit);
 
     const count = await Product.countDocuments();
 
-    const resultProduct = products.map(product => removeUnwantedFields(product.toObject(), ["__v"]));
+    const resultProduct = products.map((product) =>
+      removeUnwantedFields(product.toObject(), ["__v"])
+    );
 
     const result = {
       products: resultProduct,
@@ -195,8 +203,25 @@ export const getListProduct = async (req, res, next) => {
 export const deleteProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    await Product.findByIdAndDelete(id)
+    await Product.findByIdAndDelete(id);
     displayStatus(res, 200, "Product deleted successfully");
+  } catch (error) {
+    displayErrorStatus(res, error);
+  }
+};
+
+export const findProductById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const products = await Product.findById(id);
+
+    if (!products) {
+      createCustomError("Product not found", 404);
+    }
+
+    const result = removeUnwantedFields(products.toObject(), ["__v"]);
+
+    displayStatus(res, 200, "Product found successfully", result);
   } catch (error) {
     displayErrorStatus(res, error);
   }

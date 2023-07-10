@@ -1,5 +1,6 @@
 import { Document, Schema, model, Model } from "mongoose";
 import { IProduct } from "@type/models";
+import { createCustomError } from "@utils/createCustomError";
 
 const ImageObjectSchema = new Schema(
   {
@@ -24,9 +25,13 @@ const ProductSchema: Schema = new Schema(
 
 ProductSchema.pre<IProduct>("save", async function (next) {
   const ProductModel = this.constructor as Model<IProduct>;
-  const existingProduct = await ProductModel.findOne({ name: { $regex: new RegExp(`^${this.name}$`, 'i') } });
+  const existingProduct = await ProductModel.findOne({
+    name: { $regex: new RegExp(`^${this.name}$`, "i") },
+  });
+
   if (existingProduct) {
-    throw new Error("Product with this name already exists.");
+    createCustomError("Product with this name already exists.", 400);
+    // throw new Error("Product with this name already exists.");
   }
   next();
 });

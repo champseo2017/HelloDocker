@@ -132,3 +132,26 @@ export const validateDeleteProduct =
       displayStatus(res, 400, error?.message);
     }
   };
+
+/**
+ * Define find product by ID validation schema using Yup
+ * Validates the request body fields for finding a product
+ */
+export const findProductSchema = yup.object<{ id: string }>().shape({
+  id: yup
+    .string()
+    .required()
+    .matches(/^[0-9a-fA-F]{24}$/, "Invalid product ID")
+    .label("Product ID"),
+});
+
+export const validateFindProduct =
+  (schema: yup.ObjectSchema<{ id: string }>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await schema.validate(req.params);
+      return next();
+    } catch (error) {
+      displayStatus(res, 400, error?.message);
+    }
+  };

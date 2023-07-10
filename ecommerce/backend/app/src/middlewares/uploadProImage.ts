@@ -32,7 +32,7 @@ export const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   // Accept images only
-  if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
+  if (!file.mimetype.match(/(jpeg|jpg|png)$/i)) {
     // You can define your error here:
     const error: errorCodeFileFilter = new Error(
       "Only image files are allowed!"
@@ -42,6 +42,7 @@ const fileFilter = (req, file, cb) => {
   }
   cb(null, true);
 };
+
 
 export const upload = (maxFiles = 4) => {
   return multer({

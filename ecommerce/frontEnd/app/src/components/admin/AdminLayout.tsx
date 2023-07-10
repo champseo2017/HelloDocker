@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import AdminHomePage from "pages/admin/AdminHomePage";
 import AdminProductPage from "pages/admin/AdminProductPage";
+import AdminEditProductPage from "pages/admin/AdminEditProductPage";
 import Navbar from "./Navbar";
 
 const AdminLayout = () => {
@@ -11,6 +12,7 @@ const AdminLayout = () => {
         <Routes>
           <Route path="/" element={<AdminHomePage />} />
           <Route path="/product" element={<AdminProductPage />} />
+          <Route path="/edit-product/:id" element={<AdminEditProductPage />} />
         </Routes>
       </div>
     </div>

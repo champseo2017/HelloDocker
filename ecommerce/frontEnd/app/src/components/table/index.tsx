@@ -41,7 +41,7 @@ const ProductTable = () => {
         Header: "Product Name",
         accessor: "name",
         Cell: ({ row }) => (
-          <Link to={`/edit-product/${row.original._id}`}>
+          <Link to={`/admin/edit-product/${row.original._id}`}>
             {row.original.name}
           </Link>
         ),

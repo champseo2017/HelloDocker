@@ -12,18 +12,18 @@ const responseSuccess = (res: any) => {
 
 const responseError = (error: any) => {
   const { response, message } = error;
+  console.log("error", error)
   if (error) {
-    const { status, message: msgeRes } = response?.data;
-    if (status >= 400) {
-      useErrorToast(msgeRes);
+    if (response?.data?.status >= 400) {
+      useErrorToast(response?.data?.message);
       return {
-        status: status,
+        status: response?.data?.status,
         data: null,
-        message: msgeRes,
+        message: response?.data?.message,
       };
     }
   }
-  useErrorToast(message);
+  useErrorToast(response?.data?.message);
   return {
     status: 500,
     data: null,
