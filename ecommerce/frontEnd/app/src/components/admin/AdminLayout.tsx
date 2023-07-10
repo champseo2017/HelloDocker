@@ -1,15 +1,18 @@
 import { Routes, Route } from "react-router-dom";
-import AdminHomePage from 'pages/admin/AdminHomePage'
-import AdminProductPage from 'pages/admin/AdminProductPage'
+import AdminHomePage from "pages/admin/AdminHomePage";
+import AdminProductPage from "pages/admin/AdminProductPage";
+import Navbar from "./Navbar";
 
 const AdminLayout = () => {
   return (
-    <div>
-      <h1>Admin Layout</h1>
-      <Routes>
-        <Route path="/" element={<AdminHomePage />} />
-        <Route path="/product" element={<AdminProductPage />} />
-      </Routes>
+    <div className="min-h-screen bg-gray-100">
+      <Navbar />
+      <div className="p-8">
+        <Routes>
+          <Route path="/" element={<AdminHomePage />} />
+          <Route path="/product" element={<AdminProductPage />} />
+        </Routes>
+      </div>
     </div>
   );
 };
