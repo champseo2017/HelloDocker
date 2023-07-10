@@ -161,8 +161,35 @@ export const updateProduct = async (
 
     displayStatus(res, 200, "Product successfully updated", updatedData);
   } catch (error) {
-    console.log("error", error);
     handleFilesInRequest(req);
     displayErrorStatus(res, error);
   }
 };
+
+export const getListProduct = async (req, res, next) => {
+  const { page = 1, limit = 10, sort = '-createdAt' } = req.query;
+
+  try {
+    const products = await Product.find()
+      .sort(sort)
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const count = await Product.countDocuments();
+
+    const resultProduct = products.map(product => removeUnwantedFields(product.toObject(), ["__v"]));
+
+    const result = {
+      products: resultProduct,
+      totalPages: Math.ceil(count / limit),
+      currentPage: Number(page),
+      totalProducts: count,
+    };
+
+    displayStatus(res, 200, "List Product successfully", result);
+  } catch (err) {
+    displayErrorStatus(res, err);
+  }
+};
+

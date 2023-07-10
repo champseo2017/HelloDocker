@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { displayStatus } from "@utils/displayStatus";
 import * as yup from "yup";
-import { IProductValid } from "@type/validates";
+import { IProductValid, IGetListProduct } from "@type/validates";
 import { convertToNumber } from "@utils/convertToNumberAddPro";
 import { checkProductImages } from "@utils/checkProductImages";
 import { handleFilesInRequest } from "@utils/handleFilesInRequest";
@@ -62,13 +62,13 @@ export const productUpdateSchema = yup.object().shape({
         .max(250, "Description should not exceed 250 characters"),
       quantity: yup.number().min(0).integer().required(),
       positionImage: yup
-      .array()
-      .of(
-        yup.object({
-          position: yup.number().min(0).integer().required(),
-        })
-      )
-      .min(1),
+        .array()
+        .of(
+          yup.object({
+            position: yup.number().min(0).integer().required(),
+          })
+        )
+        .min(1),
     })
     .defined(),
 });
@@ -77,12 +77,39 @@ export const validateUpdateProduct =
   (schema: yup.ObjectSchema<{ body: IProductValid }>) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // req.body = convertToNumber(req.body);
-      console.log("req.body", req.body)
       await schema.validate({ body: req.body });
       return next();
     } catch (error) {
       handleFilesInRequest(req);
+      displayStatus(res, 400, error?.message);
+    }
+  };
+
+/**
+ * Define get list product validation schema using Yup
+ * Validates the request body fields for a get list product
+ */
+export const getListProductSchema = yup.object().shape({
+  query: yup
+    .object<IGetListProduct>({
+      page: yup.number().integer().min(0).required().label("Page"),
+      sort: yup
+        .string()
+        .matches(/^(-createdAt)*$/)
+        .required()
+        .label("Sort"),
+      limit: yup.number().integer().min(10).max(100).required().label("Limit"),
+    })
+    .defined(),
+});
+
+export const validateGetListProduct =
+  (schema: yup.ObjectSchema<{ query: IGetListProduct }>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await schema.validate({ query: req.query });
+      return next();
+    } catch (error) {
       displayStatus(res, 400, error?.message);
     }
   };

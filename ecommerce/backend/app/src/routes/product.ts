@@ -8,6 +8,9 @@ import {
   productUpdateSchema,
   validateUpdateProduct,
   updateProduct,
+  getListProductSchema,
+  validateGetListProduct,
+  getListProduct,
 } from "@controllers/product";
 import { upload, errorHandlerUpload } from "@middlewares/uploadProImage";
 import { convertBodyTypes } from "@utils/convertBodyTypes";
@@ -38,6 +41,12 @@ productRoutes.put(
   }),
   validateUpdateProduct(productUpdateSchema),
   updateProduct
+);
+
+productRoutes.get(
+  "/",
+  validateGetListProduct(getListProductSchema),
+  getListProduct,
 );
 
 export { productRoutes };

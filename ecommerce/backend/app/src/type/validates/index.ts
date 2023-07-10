@@ -18,4 +18,10 @@ interface IProductValid {
   positionImage?: { position: number }[];
 }
 
-export type { IUserReg, IUserLogin, IProductValid };
+interface IGetListProduct {
+  page?: number;
+  sort?: string;
+  limit?: number;
+}
+
+export type { IUserReg, IUserLogin, IProductValid, IGetListProduct };
