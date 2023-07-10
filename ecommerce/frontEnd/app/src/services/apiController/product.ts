@@ -17,5 +17,8 @@ export const productController = () => {
         `/product?page=${page}&sort=${sort}&limit=${limit}`
       );
     },
+    delete: async (id: string): Promise<IResponse> => {
+      return (await serviceToken()).delete(`/product/delete/${id}`);
+    },
   };
 };

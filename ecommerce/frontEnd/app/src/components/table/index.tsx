@@ -1,16 +1,35 @@
-import { useMemo, useEffect, useState, useCallback } from "react";
+import { useMemo, useEffect, useState, useCallback, MouseEvent } from "react";
 import { useTable, usePagination } from "react-table";
 import { Link } from "react-router-dom";
 import { Pagination } from "flowbite-react";
 import { productController } from "services/apiController/product";
 import { Button } from "flowbite-react";
+import DeleteModal from "components/modal/DeleteModal";
+import { useSuccessToast } from "hooks/toast/useSuccessToast";
 
 const ProductTable = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
+    null
+  );
 
   const onPageChange = (page: number) => setCurrentPage(page);
+
+  const fetchData = useCallback(async () => {
+    const response = await productController().get({
+      page: currentPage,
+      sort: "-createdAt",
+      limit: 10,
+    });
+
+    const { data } = response;
+    setTotalPages(data?.totalPages ?? 0);
+
+    setProducts(response.data.products);
+  }, [currentPage]);
 
   const columns = useMemo(
     () => [
@@ -43,7 +62,11 @@ const ProductTable = () => {
             pill
             size="sm"
             color="failure"
-            onClick={() => console.log("delete row", row)}
+            onClick={(e: MouseEvent<HTMLButtonElement>) => {
+              const { original } = row;
+              const { _id } = original;
+              onClickDelete(e, _id);
+            }}
           >
             Delete
           </Button>
@@ -69,23 +92,35 @@ const ProductTable = () => {
     state: { pageIndex },
   } = useTable({ columns, data: products }, usePagination) as any;
 
-  const fetchData = useCallback(async () => {
-    const response = await productController().get({
-      page: currentPage,
-      sort: "-createdAt",
-      limit: 10,
-    });
-
-    const { data } = response;
-    setTotalPages(data?.totalPages ?? 0);
-
-    setProducts(response.data.products);
-  }, [currentPage]);
-
   useEffect(() => {
     fetchData();
     return () => {};
   }, [fetchData]);
+
+  const onCloseModal = useCallback(() => setDeleteModalOpen(false), []);
+
+  const onDeleteProduct = useCallback(
+    async (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      if (productIdToDelete) {
+        const result = await productController().delete(productIdToDelete);
+        const { status, message } = result;
+
+        if (status === 200) {
+          fetchData();
+          useSuccessToast(message);
+        }
+      }
+      onCloseModal();
+    },
+    [productIdToDelete]
+  );
+
+  const onClickDelete = (e: MouseEvent<HTMLButtonElement>, id: string) => {
+    e.preventDefault();
+    setProductIdToDelete(id);
+    setDeleteModalOpen(true);
+  };
 
   return (
     <>
@@ -127,12 +162,21 @@ const ProductTable = () => {
           })}
         </tbody>
       </table>
-      <Pagination
-        className="flex items-center justify-center mt-4"
-        currentPage={currentPage}
-        onPageChange={onPageChange}
-        totalPages={totalPages}
-      />
+      {totalPages > 1 && (
+        <Pagination
+          className="flex items-center justify-center mt-4"
+          currentPage={currentPage}
+          onPageChange={onPageChange}
+          totalPages={totalPages}
+        />
+      )}
+      {deleteModalOpen && (
+        <DeleteModal
+          isOpen={deleteModalOpen}
+          onClose={onCloseModal}
+          onDelete={onDeleteProduct}
+        />
+      )}
     </>
   );
 };
