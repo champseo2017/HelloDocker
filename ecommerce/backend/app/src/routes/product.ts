@@ -11,6 +11,9 @@ import {
   getListProductSchema,
   validateGetListProduct,
   getListProduct,
+  deleteProductSchema,
+  validateDeleteProduct,
+  deleteProduct
 } from "@controllers/product";
 import { upload, errorHandlerUpload } from "@middlewares/uploadProImage";
 import { convertBodyTypes } from "@utils/convertBodyTypes";
@@ -47,6 +50,14 @@ productRoutes.get(
   "/",
   validateGetListProduct(getListProductSchema),
   getListProduct,
+);
+
+productRoutes.delete(
+  "/delete/:id",
+  verifyToken,
+  checkRole("admin"),
+  validateDeleteProduct(deleteProductSchema),
+  deleteProduct
 );
 
 export { productRoutes };

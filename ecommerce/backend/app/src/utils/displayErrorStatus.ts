@@ -3,9 +3,9 @@ import { displayStatus } from "@utils/displayStatus";
 import { errorCode } from "@type/middlewares";
 
 export const displayErrorStatus = (res: Response, error: errorCode) => {
-  if (!error.code) {
-    error.code = 500;
-    error.message = "Internal Server Error";
+  if (!error.code || error.code < 100 || error.code > 599) {
+    return displayStatus(res, 500, "Internal Server Error");
   }
-  displayStatus(res, error.code, error.message);
+
+  return displayStatus(res, error.code, error.message);
 };

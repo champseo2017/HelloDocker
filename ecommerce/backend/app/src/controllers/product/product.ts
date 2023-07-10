@@ -174,7 +174,6 @@ export const getListProduct = async (req, res, next) => {
       .sort(sort)
       .limit(limit)
       .skip((page - 1) * limit)
-      .exec();
 
     const count = await Product.countDocuments();
 
@@ -193,3 +192,12 @@ export const getListProduct = async (req, res, next) => {
   }
 };
 
+export const deleteProduct = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    await Product.findByIdAndDelete(id)
+    displayStatus(res, 200, "Product deleted successfully");
+  } catch (error) {
+    displayErrorStatus(res, error);
+  }
+};

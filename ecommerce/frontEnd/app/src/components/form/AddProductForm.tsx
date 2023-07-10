@@ -1,7 +1,7 @@
 import { useEffect, FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { productController } from "services/apiController/product";
-import { IProduct, IImageObject } from "services/typeApi";
+import { IProductAdd, IImageObject } from "services/typeApi";
 import { FileUploader } from "react-drag-drop-files";
 import { useSuccessToast } from "hooks/toast/useSuccessToast";
 
@@ -15,7 +15,7 @@ const AddProductForm: FC = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<IProduct>();
+  } = useForm<IProductAdd>();
 
   useEffect(() => {
     register("productImages");
@@ -31,7 +31,7 @@ const AddProductForm: FC = () => {
     setUploadedImages(imageObjects);
   };
 
-  const onSubmit = async (data: IProduct) => {
+  const onSubmit = async (data: IProductAdd) => {
     const formData = new FormData();
     Object.keys(data).forEach((key) => {
       if (key === "productImages") {
@@ -42,7 +42,7 @@ const AddProductForm: FC = () => {
         formData.append(key, data[key]);
       }
     });
-    const response = await productController().addProduct(formData);
+    const response = await productController().add(formData);
     const { message } = response;
     useSuccessToast(message);
   };

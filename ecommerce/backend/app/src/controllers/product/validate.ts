@@ -90,24 +90,43 @@ export const validateUpdateProduct =
  * Validates the request body fields for a get list product
  */
 export const getListProductSchema = yup.object().shape({
-  query: yup
-    .object<IGetListProduct>({
-      page: yup.number().integer().min(0).required().label("Page"),
-      sort: yup
-        .string()
-        .matches(/^(-createdAt)*$/)
-        .required()
-        .label("Sort"),
-      limit: yup.number().integer().min(10).max(100).required().label("Limit"),
-    })
-    .defined(),
+  page: yup.number().integer().min(0).required().label("Page"),
+  sort: yup
+    .string()
+    .matches(/^(-createdAt)*$/)
+    .required()
+    .label("Sort"),
+  limit: yup.number().integer().min(10).max(100).required().label("Limit"),
 });
 
 export const validateGetListProduct =
-  (schema: yup.ObjectSchema<{ query: IGetListProduct }>) =>
+  (schema: yup.ObjectSchema<IGetListProduct>) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await schema.validate({ query: req.query });
+      await schema.validate(req.query);
+      return next();
+    } catch (error) {
+      displayStatus(res, 400, error?.message);
+    }
+  };
+
+/**
+ * Define delete product validation schema using Yup
+ * Validates the request body fields for a delete product
+ */
+export const deleteProductSchema = yup.object<{ id: string }>().shape({
+  id: yup
+    .string()
+    .required()
+    .matches(/^[0-9a-fA-F]{24}$/, "Invalid product ID")
+    .label("Product ID"),
+});
+
+export const validateDeleteProduct =
+  (schema: yup.ObjectSchema<{ id: string }>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await schema.validate(req.params);
       return next();
     } catch (error) {
       displayStatus(res, 400, error?.message);

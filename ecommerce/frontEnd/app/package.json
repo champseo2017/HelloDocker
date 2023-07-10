@@ -8,11 +8,16 @@
     "build": "npm run build:css && react-scripts build"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
     "@reduxjs/toolkit": "^1.9.5",
+    "@table-library/react-table-library": "^4.1.4",
+    "@tanstack/react-table": "^8.9.3",
     "@types/babel__core": "^7.20.1",
+    "@types/react-table": "^7.7.14",
     "autoprefixer": "^10.4.14",
     "axios": "^1.4.0",
     "axios-auth-refresh": "^3.3.6",
+    "flowbite-react": "^0.4.10",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "postcss": "^8.4.25",
@@ -23,6 +28,7 @@
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.14.1",
     "react-scripts": "^5.0.1",
+    "react-table": "^7.7.0",
     "sort-by": "^1.2.0",
     "tailwindcss": "^3.3.2"
   },

@@ -2,7 +2,7 @@ interface IImageObject {
   file: File;
 }
 
-interface IProduct {
+interface IProductAdd {
   name: string;
   price: number;
   description: string;
@@ -10,4 +10,10 @@ interface IProduct {
   productImages: IImageObject[];
 }
 
-export type { IImageObject, IProduct };
+interface IProductGet {
+  page: number;
+  sort: string;
+  limit: number;
+}
+
+export type { IImageObject, IProductAdd, IProductGet };
