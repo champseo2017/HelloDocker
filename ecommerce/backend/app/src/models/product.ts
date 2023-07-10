@@ -24,7 +24,7 @@ const ProductSchema: Schema = new Schema(
 
 ProductSchema.pre<IProduct>("save", async function (next) {
   const ProductModel = this.constructor as Model<IProduct>;
-  const existingProduct = await ProductModel.findOne({ name: this.name });
+  const existingProduct = await ProductModel.findOne({ name: { $regex: new RegExp(`^${this.name}$`, 'i') } });
   if (existingProduct) {
     throw new Error("Product with this name already exists.");
   }

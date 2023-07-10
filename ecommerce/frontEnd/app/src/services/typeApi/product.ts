@@ -1,6 +1,5 @@
 interface IImageObject {
-  position: number;
-  url: string;
+  file: File;
 }
 
 interface IProduct {
@@ -8,7 +7,7 @@ interface IProduct {
   price: number;
   description: string;
   quantity: number;
-  imagePaths: IImageObject[];
+  productImages: IImageObject[];
 }
 
 export type { IImageObject, IProduct };

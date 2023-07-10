@@ -4,7 +4,7 @@ import { userController } from "services/apiController/user";
 import { ILogin } from "services/typeApi";
 import { useSuccessToast } from "hooks/toast/useSuccessToast";
 
-const Login: React.FC = () => {
+const LoginForm: React.FC = () => {
   const {
     register,
     handleSubmit,
@@ -57,4 +57,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default LoginForm;

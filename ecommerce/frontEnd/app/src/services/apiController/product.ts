@@ -1,5 +1,5 @@
 import { serviceToken } from "../axiosProvider";
-import { IProduct, IResponse } from "../typeApi";
+import { IResponse } from "../typeApi";
 import { configHeader } from "../configHeader";
 
 export const productController = () => {
@@ -9,7 +9,7 @@ export const productController = () => {
   };
 
   return {
-    addProduct: async (data: IProduct): Promise<IResponse> => {
+    addProduct: async (data: FormData): Promise<IResponse> => {
       const formData = data;
       return (await serviceToken()).post(
         `/product/add`,

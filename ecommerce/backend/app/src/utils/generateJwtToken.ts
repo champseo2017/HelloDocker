@@ -3,7 +3,7 @@ import { IUserTokenPayload } from "@type/utils";
 
 export const generateJwtToken = (user: IUserTokenPayload): string => {
   const token = jwt.sign(user, process.env.JWT_SECRET || "", {
-    expiresIn: "1h",
+    expiresIn: "3h",
   });
   return token;
 };
