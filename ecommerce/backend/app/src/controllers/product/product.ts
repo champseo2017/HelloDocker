@@ -23,6 +23,7 @@ export const addProduct = async (
         return { position: index, url: publicUrl };
       }
     );
+    console.log("req.files", req.files);
     const product = new Product({ ...productData, imagePaths });
 
     await product.save();
@@ -64,7 +65,7 @@ export const updateProduct = async (
         if (
           req.body.positionImage &&
           req.body.positionImage[index] &&
-          typeof req.body.positionImage[index].position === 'number'
+          typeof req.body.positionImage[index].position === "number"
         ) {
           return {
             position: req.body.positionImage[index].position,
@@ -119,7 +120,12 @@ export const updateProduct = async (
       }
     } else if (req.body.positionImage) {
       // Handle image deletion
-      for (const positionObject of req.body.positionImage) {
+      // Sort positionImage from highest to lowest
+      const positionImage = req.body.positionImage.sort(
+        (a, b) => b.position - a.position
+      );
+
+      for (const positionObject of positionImage) {
         const position = positionObject.position;
 
         // Check if position is valid
@@ -157,20 +163,15 @@ export const updateProduct = async (
     delete updatedData.positionImage;
 
     // Update the product in the database
-    // await Product.findOneAndUpdate({ _id: req.body.id }, updatedData, { new: true });
-
-    // Update the product properties
-    product.set(updatedData);
-    await product.save();
+    await Product.findOneAndUpdate({ _id: req.body.id }, updatedData, { new: true });
 
     displayStatus(res, 200, "Product successfully updated", updatedData);
   } catch (error) {
-    console.log('error', error)
+    console.log("error", error);
     handleFilesInRequest(req);
     displayErrorStatus(res, error);
   }
 };
-
 
 export const getListProduct = async (req, res, next) => {
   const { page = 1, limit = 10, sort = "-createdAt" } = req.query;

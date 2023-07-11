@@ -12,7 +12,6 @@ const responseSuccess = (res: any) => {
 
 const responseError = (error: any) => {
   const { response, message } = error;
-  console.log("error", error)
   if (error) {
     if (response?.data?.status >= 400) {
       useErrorToast(response?.data?.message);

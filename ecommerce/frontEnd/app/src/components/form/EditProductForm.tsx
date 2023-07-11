@@ -1,4 +1,4 @@
-import { useEffect, FC, useState } from "react";
+import { useEffect, FC, useState, MouseEvent } from "react";
 import { useForm } from "react-hook-form";
 import { productController } from "services/apiController/product";
 import {
@@ -19,6 +19,10 @@ type ParamTypes = {
 
 export const EditProductForm: FC = () => {
   const [uploadedImages, setUploadedImages] = useState<IUploadedImages[]>([]);
+  const [deletedImagePositions, setDeletedImagePositions] = useState<number[]>(
+    []
+  );
+
   const [existingImages, setExistingImages] = useState([]);
   const { id } = useParams<ParamTypes>();
   const {
@@ -54,7 +58,6 @@ export const EditProductForm: FC = () => {
       setExistingImages(response.data.imagePaths);
     }
   };
-  
 
   const handleUpdateImage = (file: File, position: number) => {
     const updatedImageObject = {
@@ -91,30 +94,68 @@ export const EditProductForm: FC = () => {
     setUploadedImages(updatedUploadedImages);
   };
 
-  const addNewImages = (files: FileList) => {
-    const newImages: IUploadedImages[] = Array.from(files).map(
-      (file, index) => ({
-        file,
-        position: uploadedImages.length + index,
-      })
+  const addNewImages = (file: File) => {
+    // Create a DataTransfer object and append the file
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    const files = dataTransfer.files;
+
+    // Find the missing positions
+    let availablePositions = [0, 1, 2, 3].filter(
+      (pos) => !existingImages.find((img) => img.position === pos)
     );
 
-    setUploadedImages((prevState) => prevState.concat(newImages));
+    const newImages: IUploadedImages[] = Array.from(files).map(
+      (file, index) => {
+        const position = availablePositions[index]; // Use the missing positions
+        return {
+          file,
+          position,
+        };
+      }
+    );
+
+    setUploadedImages((prevState) => [...prevState, ...newImages]);
+
+    // Update existingImages to display the new images immediately
+    const updatedExistingImages = [...existingImages];
+
+    newImages.forEach((newImage) => {
+      updatedExistingImages.push({
+        position: newImage.position,
+        url: URL.createObjectURL(newImage.file),
+      });
+    });
+
+    setExistingImages(updatedExistingImages);
   };
 
+  // Update deletedImagePositions in handleDeleteImage
   const handleDeleteImage = (position: number) => {
+    // Find the image at the given position
+    const imageAtPosition = existingImages.find(
+      (img) => img.position === position
+    );
+
+    // If the image exists in the server data (it has an URL)
+    if (
+      imageAtPosition &&
+      imageAtPosition.url.startsWith("http://localhost:8000/")
+    ) {
+      // Mark it for deletion in the server
+      setDeletedImagePositions((prevState) => [...prevState, position]);
+    }
+
+    // Always remove it from the client data
     const updatedExistingImages = existingImages.filter(
       (image) => image.position !== position
     );
     setExistingImages(updatedExistingImages);
+
     const updatedUploadedImages = uploadedImages.filter(
       (image) => image.position !== position
     );
     setUploadedImages(updatedUploadedImages);
-    setValue(
-      "positionImage",
-      updatedExistingImages.map((image) => ({ position: image.position }))
-    );
   };
 
   // Use watch to track the changes of productImages and positionImage
@@ -140,7 +181,6 @@ export const EditProductForm: FC = () => {
         }
       );
     }
-    
 
     if (watchedPositionImage && watchedPositionImage.length > 0) {
       const positionImage = watchedPositionImage.map((img, index) => ({
@@ -149,7 +189,26 @@ export const EditProductForm: FC = () => {
       formData.append("positionImage", JSON.stringify(positionImage));
     }
 
-    const response = await productController().update(formData);
+    if (deletedImagePositions && deletedImagePositions.length > 0) {
+      const positionImage = deletedImagePositions.map((position) => ({
+        position,
+      }));
+      formData.append("positionImage", JSON.stringify(positionImage));
+    }
+
+    // ตรวจสอบฟิลด์ที่ซ้ำกัน
+    const formDataEntries = formData.entries();
+    const newFormData = new FormData();
+
+    for (const [name, value] of formDataEntries) {
+      if (name === "positionImage" && newFormData.has(name)) {
+        continue; // ข้ามการเพิ่มฟิลด์ที่ซ้ำกัน
+      }
+
+      newFormData.append(name, value); // เพิ่มฟิลด์ลงใน newFormData
+    }
+
+    const response = await productController().update(newFormData);
     const { message, status } = response;
     if (status === 200) {
       useSuccessToast(message);
@@ -191,51 +250,52 @@ export const EditProductForm: FC = () => {
         {errors.quantity && <span>This field is required</span>}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 !mt-[unset]">
-        {existingImages.map((image, index) => (
-          <div key={index} className="relative">
-            <img
-              src={image.url}
-              alt={`Existing ${index}`}
-              className="w-full h-auto rounded"
+      <div className="grid grid-cols-3 gap-4 !mt-[unset] relative">
+        {existingImages.length < 4 && (
+          <div className="col-start-3">
+            {/* Add FileUploader for adding new images */}
+            <FileUploader
+              maxSize={10}
+              handleChange={(files) => {
+                addNewImages(files);
+              }}
+              types={fileTypes}
+              classes="!min-w-[195px]"
             />
-            <div className="absolute max-h-[35%] top-0 right-0 flex p-2 space-x-2">
-              <FileUploader
-                maxSize={10}
-                handleChange={(files) => {
-                  handleUpdateImage(files, image.position);
-                }}
-                types={fileTypes}
-                classes="!min-w-[195px]"
+          </div>
+        )}
+
+        <div className="col-span-3 grid grid-cols-2 gap-4">
+          {existingImages.map((image, index) => (
+            <div key={index} className="relative">
+              <img
+                src={image.url}
+                alt={`Existing ${index}`}
+                className="w-full h-auto rounded"
               />
-              <button
-                type="button"
-                className="p-1 text-white bg-red-500 rounded"
-                onClick={() => handleDeleteImage(image.position)}
-              >
-                Delete
-              </button>
+              <div className="absolute max-h-[35%] top-0 right-0 flex p-2 space-x-2">
+                <FileUploader
+                  maxSize={10}
+                  handleChange={(files) => {
+                    handleUpdateImage(files, image.position);
+                  }}
+                  types={fileTypes}
+                  classes="!min-w-[195px]"
+                />
+                <button
+                  type="button"
+                  className="p-1 text-white bg-red-500 rounded"
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    e.preventDefault();
+                    handleDeleteImage(image.position);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-        {/* {uploadedImages.map((image, index) => (
-          <div key={index} className="relative">
-            <img
-              src={URL.createObjectURL(image.file)}
-              alt={`Uploaded ${index}`}
-              className="w-full h-auto rounded"
-            />
-            <div className="absolute bottom-0 right-0 flex p-2 space-x-2">
-              <button
-                type="button"
-                className="p-1 text-white bg-red-500 rounded"
-                onClick={() => handleDeleteImage(image.position)}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))} */}
+          ))}
+        </div>
       </div>
 
       <div className="md:col-span-2">
