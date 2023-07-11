@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import AdminHomePage from "pages/admin/AdminHomePage";
 import AdminProductPage from "pages/admin/AdminProductPage";
@@ -6,6 +7,7 @@ import Navbar from "./Navbar";
 import Footer from "components/client/Footer";
 
 const AdminLayout = () => {
+
   return (
     <div className="bg-gray-100 flex flex-col justify-between min-h-screen">
       <Navbar />

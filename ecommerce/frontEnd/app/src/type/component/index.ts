@@ -17,4 +17,16 @@ interface IProductListings {
   totalProducts: number;
 }
 
-export type { IProductListings, IDetailProduct };
+interface IProductDetail {
+  _id: string;
+  name: string;
+  price: number;
+  description: string;
+  quantity: number;
+  imagePaths: {
+    position: number;
+    url: string;
+  }[];
+}
+
+export type { IProductListings, IDetailProduct, IProductDetail };

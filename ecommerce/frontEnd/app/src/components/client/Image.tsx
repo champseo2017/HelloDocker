@@ -1,7 +1,13 @@
+import { FC } from "react";
 
-const Image = ({ src, alt, className }) => {
+const Image: FC<{
+  src: string;
+  alt: string;
+  className: string;
+  style?: any;
+}> = ({ src, alt, className, style }) => {
   return (
-    <div className={`relative ${className}`}>
+    <div style={style} className={`relative ${className}`}>
       <img
         src={src}
         alt={alt}

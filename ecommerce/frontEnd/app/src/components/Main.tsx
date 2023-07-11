@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AdminLayout from "components/admin/AdminLayout";
 import ClientLayout from "components/client/ClientLayout";
 import AuthProvider from "contexts/AuthContext";
@@ -7,8 +7,10 @@ import NotFound from "components/notFound";
 import HomePage from "pages/HomePage";
 import CartPage from "pages/CartPage";
 import ProductPage from "pages/ProductPage";
+import LoginPage from 'pages/LoginPage'
 
 const Main = () => {
+ 
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -34,6 +36,14 @@ const Main = () => {
             element={
               <ClientLayout>
                 <ProductPage />
+              </ClientLayout>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <ClientLayout>
+                <LoginPage />
               </ClientLayout>
             }
           />

@@ -3,8 +3,20 @@ import { useForm } from "react-hook-form";
 import { userController } from "services/apiController/user";
 import { ILogin } from "services/typeApi";
 import { useSuccessToast } from "hooks/toast/useSuccessToast";
+import { redirect, useNavigate } from "react-router-dom";
+import jwtDecode from "jwt-decode";
+import { timeout } from "utils/timeout";
+
+interface User {
+  userId: string;
+  username: string;
+  role: string;
+  iat: number;
+  exp: number;
+}
 
 const LoginForm: React.FC = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -13,15 +25,25 @@ const LoginForm: React.FC = () => {
 
   const onSubmit = async (data: ILogin) => {
     const response = await userController().login(data);
-    const { message } = response;
-    useSuccessToast(message);
+    const { message, data: dataLogin } = response;
+    if (dataLogin) {
+      const { token } = dataLogin;
+      const decoded: User = jwtDecode(token);
+      useSuccessToast(message);
+      await timeout(1000)
+      if (decoded?.role === "admin") {
+        window.location.href = '/admin'
+      } else {
+        window.location.href = '/'
+      }
+    }
   };
 
   return (
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-white rounded shadow-md"
+        className="p-6 bg-white rounded shadow-md w-[25rem]"
       >
         <h2 className="mb-4 text-2xl font-bold text-gray-700">Login</h2>
         <div className="mb-4">

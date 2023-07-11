@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Main from "./Main";
 import { Toaster } from "react-hot-toast";
 
