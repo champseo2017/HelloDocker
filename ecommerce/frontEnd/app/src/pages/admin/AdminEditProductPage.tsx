@@ -2,7 +2,7 @@ import EditProductForm from "components/form/EditProductForm";
 
 const AdminEditProductPage = () => {
   return (
-    <div>
+    <div className="mx-auto max-w-6xl">
       <EditProductForm />
     </div>
   );

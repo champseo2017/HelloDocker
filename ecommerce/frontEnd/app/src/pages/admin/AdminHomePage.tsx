@@ -4,8 +4,8 @@ const notify = () => useSuccessToast("Make me a toast");
 
 const AdminHomePage = () => {
   return (
-    <div>
-      <button onClick={notify}>Make me a toast</button>
+    <div className="mx-auto max-w-6xl">
+      <h1 className="text-lg capitalize">welcome to admin panel</h1>
     </div>
   );
 };

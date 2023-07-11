@@ -1,14 +1,51 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminLayout from "components/admin/AdminLayout";
 import ClientLayout from "components/client/ClientLayout";
+import AuthProvider from "contexts/AuthContext";
+import ProtectedRoute from "middlewares/ProtectedRoute";
+import NotFound from "components/notFound";
+import HomePage from "pages/HomePage";
+import CartPage from "pages/CartPage";
 
 const Main = () => {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/*" element={<ClientLayout />} />
-        <Route path="/admin/*" element={<AdminLayout />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ClientLayout>
+                <HomePage />
+              </ClientLayout>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <ClientLayout>
+                <CartPage />
+              </ClientLayout>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <ClientLayout>
+                <NotFound />
+              </ClientLayout>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 };

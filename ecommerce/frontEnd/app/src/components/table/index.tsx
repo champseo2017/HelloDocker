@@ -127,7 +127,10 @@ const ProductTable = () => {
       <table {...getTableProps()} className="w-full divide-y divide-gray-200">
         <thead>
           {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()} className="bg-gray-50">
+            <tr
+              {...headerGroup.getHeaderGroupProps()}
+              className="bg-gray-50 hover:bg-gray-100"
+            >
               {headerGroup.headers.map((column) => (
                 <th
                   {...column.getHeaderProps()}
@@ -146,7 +149,10 @@ const ProductTable = () => {
           {page.map((row) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <tr
+                {...row.getRowProps()}
+                className="hover:bg-gray-100 transition-colors"
+              >
                 {row.cells.map((cell) => {
                   return (
                     <td

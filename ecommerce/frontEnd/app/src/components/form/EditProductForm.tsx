@@ -131,37 +131,34 @@ export const EditProductForm: FC = () => {
     setExistingImages(updatedExistingImages);
   };
 
- // Update deletedImagePositions in handleDeleteImage
- const handleDeleteImage = (position: number) => {
-  // Find the image at the given position
-  const imageAtPosition = existingImages.find((img) => img.position === position);
+  // Update deletedImagePositions in handleDeleteImage
+  const handleDeleteImage = (position: number) => {
+    // Find the image at the given position
+    const imageAtPosition = existingImages.find(
+      (img) => img.position === position
+    );
 
-  // If the image exists in the server data (it has a URL)
-  if (
-    imageAtPosition &&
-    imageAtPosition.url.startsWith("http://localhost:8000/")
-  ) {
-    // Mark it for deletion on the server
-    setDeletedImagePositions((prevState) => [...prevState, position]);
-  }
+    // If the image exists in the server data (it has a URL)
+    if (
+      imageAtPosition &&
+      imageAtPosition.url.startsWith("http://localhost:8000/")
+    ) {
+      // Mark it for deletion on the server
+      setDeletedImagePositions((prevState) => [...prevState, position]);
+    }
 
-  // Always remove it from the client data
-  const updatedExistingImages = existingImages.filter(
-    (image) => image.position !== position
-  );
-  setExistingImages(updatedExistingImages);
+    // Always remove it from the client data
+    const updatedExistingImages = existingImages.filter(
+      (image) => image.position !== position
+    );
+    setExistingImages(updatedExistingImages);
 
-  // Check if the image was in the uploaded images and remove it
-  const updatedUploadedImages = uploadedImages.filter(
-    (image) => image.position !== position
-  );
-  setUploadedImages(updatedUploadedImages);
-};
-
-
-
-
-
+    // Check if the image was in the uploaded images and remove it
+    const updatedUploadedImages = uploadedImages.filter(
+      (image) => image.position !== position
+    );
+    setUploadedImages(updatedUploadedImages);
+  };
 
   // Use watch to track the changes of productImages and positionImage
   const watchedProductImages = watch("productImages");
@@ -189,11 +186,14 @@ export const EditProductForm: FC = () => {
 
     // Replace this part with the new code
     if (watchedPositionImage && watchedPositionImage.length > 0) {
-      const positionImage = watchedPositionImage.filter((img) => 
-        !data.deletedImagePositions.includes(Number(img.position).valueOf()) // only add positions that are not in the deleted list
-      ).map((img) => ({
-        position: Number(img.position).valueOf(),
-      }));
+      const positionImage = watchedPositionImage
+        .filter(
+          (img) =>
+            !data.deletedImagePositions.includes(Number(img.position).valueOf()) // only add positions that are not in the deleted list
+        )
+        .map((img) => ({
+          position: Number(img.position).valueOf(),
+        }));
       formData.append("positionImage", JSON.stringify(positionImage));
     }
 
@@ -229,33 +229,70 @@ export const EditProductForm: FC = () => {
       className="space-y-4 md:grid md:grid-cols-2 md:gap-4"
     >
       <div>
+        <label
+          className="block text-sm font-medium text-gray-700 mb-1"
+          htmlFor="name"
+        >
+          Product Name
+        </label>
         <input
           {...register("name", { required: true })}
           placeholder="Product Name"
           className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          id="name"
         />
         {errors.name && <span>This field is required</span>}
 
+        <label
+          className="block text-sm font-medium text-gray-700 mb-1"
+          htmlFor="price"
+        >
+          Price
+        </label>
         <input
           {...register("price", { required: true })}
           placeholder="Product Price"
           className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          id="price"
         />
         {errors.price && <span>This field is required</span>}
 
+        <label
+          className="block text-sm font-medium text-gray-700 mb-1"
+          htmlFor="description"
+        >
+          Description
+        </label>
         <textarea
           {...register("description", { required: true })}
           placeholder="Product Description"
           className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          id="description"
         />
         {errors.description && <span>This field is required</span>}
 
+        <label
+          className="block text-sm font-medium text-gray-700 mb-1"
+          htmlFor="quantity"
+        >
+          Quantity
+        </label>
         <input
           {...register("quantity", { required: true })}
           placeholder="Product Quantity"
           className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          id="quantity"
         />
         {errors.quantity && <span>This field is required</span>}
+
+        <div className="md:col-span-2">
+          <button
+            type="submit"
+            className="w-full p-2 text-white bg-blue-500 rounded cursor-pointer"
+          >
+            Submit
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4 !mt-[unset] relative">
@@ -303,15 +340,6 @@ export const EditProductForm: FC = () => {
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="md:col-span-2">
-        <button
-          type="submit"
-          className="w-full p-2 text-white bg-blue-500 rounded cursor-pointer"
-        >
-          Submit
-        </button>
       </div>
     </form>
   );
