@@ -123,39 +123,40 @@ export const updateProduct = async (
 
         product.imagePaths = updatedImagePaths; // อัปเดตรายการรูปภาพในโมเดลสินค้า
       }
-    } else if (req.body.positionImage) {
-      // Handle image deletion
+    } else if (req.body.positionImage && req.body.positionImage.length) {
       // Sort positionImage from highest to lowest
       const positionImage = req.body.positionImage.sort(
         (a, b) => b.position - a.position
       );
-
       for (const positionObject of positionImage) {
         const position = positionObject.position;
 
         // Check if position is valid
-        if (position < 0 || position >= product.imagePaths.length) {
+        const existingImage = product.imagePaths.find(
+          (imagePath) => imagePath.position === position
+        );
+        if (!existingImage) {
           createCustomError("Invalid image position.", 400);
-        }
-
-        // Prevent deletion if only one image left
-        if (product.imagePaths.length === 1) {
-          createCustomError(
-            "Cannot delete image. Product must have at least one image.",
-            400
+        } else {
+          // Prevent deletion if only one image left
+          if (product.imagePaths.length === 1) {
+            createCustomError(
+              "Cannot delete image. Product must have at least one image.",
+              400
+            );
+          }
+          // Delete the image file
+          const filePath = urlToFilePath(existingImage.url);
+          try {
+            await unlinkAsync(filePath);
+          } catch (error) {
+            throw createCustomError("Failed to delete image file.", 500);
+          }
+          // Delete the image path at the position
+          product.imagePaths = product.imagePaths.filter(
+            (imagePath) => imagePath.position !== position
           );
         }
-
-        // Delete the image file
-        const filePath = urlToFilePath(product.imagePaths[position]?.url);
-        try {
-          await unlinkAsync(filePath);
-        } catch (error) {
-          throw createCustomError("Failed to delete image file.", 500);
-        }
-
-        // Delete the image path at the position
-        product.imagePaths.splice(position, 1);
       }
     }
 
