@@ -6,8 +6,10 @@ import { productController } from "services/apiController/product";
 import { Button } from "flowbite-react";
 import DeleteModal from "components/modal/DeleteModal";
 import { useSuccessToast } from "hooks/toast/useSuccessToast";
+import { useModal } from "contexts/ModalContext";
 
 const ProductTable = () => {
+  const { openModal, isModalOpen, closeModal } = useModal();
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -29,7 +31,7 @@ const ProductTable = () => {
     setTotalPages(data?.totalPages ?? 0);
 
     setProducts(response.data.products);
-  }, [currentPage]);
+  }, [currentPage, isModalOpen]);
 
   const columns = useMemo(
     () => [

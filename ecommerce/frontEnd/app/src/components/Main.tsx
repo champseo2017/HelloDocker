@@ -6,6 +6,7 @@ import ProtectedRoute from "middlewares/ProtectedRoute";
 import NotFound from "components/notFound";
 import HomePage from "pages/HomePage";
 import CartPage from "pages/CartPage";
+import ProductPage from "pages/ProductPage";
 
 const Main = () => {
   return (
@@ -25,6 +26,14 @@ const Main = () => {
             element={
               <ClientLayout>
                 <CartPage />
+              </ClientLayout>
+            }
+          />
+          <Route
+            path="/products/:id"
+            element={
+              <ClientLayout>
+                <ProductPage />
               </ClientLayout>
             }
           />

@@ -18,7 +18,7 @@ const Navbar = () => {
               src="/image/energy-drink.png"
             />
             <span className="text-xl font-primary font-bold tracking-tight pt-1">
-              {process.env.siteTitle}
+              If you want to be fresh
             </span>
           </h1>
         </Link>

@@ -21,6 +21,7 @@
     "@types/babel__core": "^7.20.1",
     "@types/react-fontawesome": "^1.6.5",
     "@types/react-table": "^7.7.14",
+    "@types/react-transition-group": "^4.4.6",
     "autoprefixer": "^10.4.14",
     "axios": "^1.4.0",
     "axios-auth-refresh": "^3.3.6",

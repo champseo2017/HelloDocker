@@ -4,10 +4,13 @@ import { productController } from "services/apiController/product";
 import { IProductAdd, IImageObject } from "services/typeApi";
 import { FileUploader } from "react-drag-drop-files";
 import { useSuccessToast } from "hooks/toast/useSuccessToast";
+import { useModal } from "contexts/ModalContext";
 
 const fileTypes = ["JPG", "PNG"];
 
 const AddProductForm: FC = () => {
+  
+  const { openModal, isModalOpen, closeModal } = useModal();
   const [uploadedImages, setUploadedImages] = useState<IImageObject[]>([]);
 
   const {
@@ -47,8 +50,9 @@ const AddProductForm: FC = () => {
     const { message, status } = response;
     if (status === 200) {
       useSuccessToast(message);
-      reset()
+      reset();
       setUploadedImages([]);
+      closeModal()
     }
   };
 
@@ -58,36 +62,74 @@ const AddProductForm: FC = () => {
       className="space-y-4 md:grid md:grid-cols-2 md:gap-4"
     >
       <div>
+        <label
+          className="block text-sm font-medium text-gray-700 mb-1"
+          htmlFor="name"
+        >
+          Name
+        </label>
         <input
           {...register("name", { required: true })}
           placeholder="Product Name"
           className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          id="name"
         />
         {errors.name && <span>This field is required</span>}
 
+        <label
+          className="block text-sm font-medium text-gray-700 mb-1"
+          htmlFor="price"
+        >
+          Price
+        </label>
         <input
           {...register("price", { required: true })}
           placeholder="Product Price"
           className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          id="price"
         />
         {errors.price && <span>This field is required</span>}
+
+        <label
+          className="block text-sm font-medium text-gray-700 mb-1"
+          htmlFor="description"
+        >
+          Description
+        </label>
 
         <textarea
           {...register("description", { required: true })}
           placeholder="Product Description"
           className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          id="description"
         />
         {errors.description && <span>This field is required</span>}
+
+        <label
+          className="block text-sm font-medium text-gray-700 mb-1"
+          htmlFor="quantity"
+        >
+          Quantity
+        </label>
 
         <input
           {...register("quantity", { required: true })}
           placeholder="Product Quantity"
           className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          id="quantity"
         />
         {errors.quantity && <span>This field is required</span>}
+        <div className="md:col-span-2">
+          <button
+            type="submit"
+            className="w-full p-2 text-white bg-blue-500 rounded cursor-pointer"
+          >
+            Submit
+          </button>
+        </div>
       </div>
 
-      <div>
+      <div className="!mt-[unset]">
         <FileUploader
           maxSize={10}
           handleChange={onDrop}
@@ -107,15 +149,6 @@ const AddProductForm: FC = () => {
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="md:col-span-2">
-        <button
-          type="submit"
-          className="w-full p-2 text-white bg-blue-500 rounded cursor-pointer"
-        >
-          Submit
-        </button>
       </div>
     </form>
   );

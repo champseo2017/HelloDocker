@@ -1,10 +1,11 @@
-import ProductTable from "components/table";
+import ContainerProductPage from "container/ContainerProductPage";
+import ModalProvider from "contexts/ModalContext";
 
 const AdminProductPage = () => {
   return (
-    <div className="mx-auto max-w-6xl">
-      <ProductTable />
-    </div>
+    <ModalProvider>
+      <ContainerProductPage />
+    </ModalProvider>
   );
 };
 
