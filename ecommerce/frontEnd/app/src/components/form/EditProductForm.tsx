@@ -46,7 +46,8 @@ export const EditProductForm: FC = () => {
       "positionImage",
       uploadedImages.map((img) => ({ position: img.position }))
     );
-  }, [uploadedImages, setValue]);
+    setValue("deletedImagePositions", deletedImagePositions);
+  }, [uploadedImages, setValue, deletedImagePositions]);
 
   const loadProduct = async () => {
     const response = await productController().getById(id);
@@ -130,33 +131,37 @@ export const EditProductForm: FC = () => {
     setExistingImages(updatedExistingImages);
   };
 
-  // Update deletedImagePositions in handleDeleteImage
-  const handleDeleteImage = (position: number) => {
-    // Find the image at the given position
-    const imageAtPosition = existingImages.find(
-      (img) => img.position === position
-    );
+ // Update deletedImagePositions in handleDeleteImage
+ const handleDeleteImage = (position: number) => {
+  // Find the image at the given position
+  const imageAtPosition = existingImages.find((img) => img.position === position);
 
-    // If the image exists in the server data (it has an URL)
-    if (
-      imageAtPosition &&
-      imageAtPosition.url.startsWith("http://localhost:8000/")
-    ) {
-      // Mark it for deletion in the server
-      setDeletedImagePositions((prevState) => [...prevState, position]);
-    }
+  // If the image exists in the server data (it has a URL)
+  if (
+    imageAtPosition &&
+    imageAtPosition.url.startsWith("http://localhost:8000/")
+  ) {
+    // Mark it for deletion on the server
+    setDeletedImagePositions((prevState) => [...prevState, position]);
+  }
 
-    // Always remove it from the client data
-    const updatedExistingImages = existingImages.filter(
-      (image) => image.position !== position
-    );
-    setExistingImages(updatedExistingImages);
+  // Always remove it from the client data
+  const updatedExistingImages = existingImages.filter(
+    (image) => image.position !== position
+  );
+  setExistingImages(updatedExistingImages);
 
-    const updatedUploadedImages = uploadedImages.filter(
-      (image) => image.position !== position
-    );
-    setUploadedImages(updatedUploadedImages);
-  };
+  // Check if the image was in the uploaded images and remove it
+  const updatedUploadedImages = uploadedImages.filter(
+    (image) => image.position !== position
+  );
+  setUploadedImages(updatedUploadedImages);
+};
+
+
+
+
+
 
   // Use watch to track the changes of productImages and positionImage
   const watchedProductImages = watch("productImages");
@@ -182,9 +187,12 @@ export const EditProductForm: FC = () => {
       );
     }
 
+    // Replace this part with the new code
     if (watchedPositionImage && watchedPositionImage.length > 0) {
-      const positionImage = watchedPositionImage.map((img, index) => ({
-        position: img.position,
+      const positionImage = watchedPositionImage.filter((img) => 
+        !data.deletedImagePositions.includes(Number(img.position).valueOf()) // only add positions that are not in the deleted list
+      ).map((img) => ({
+        position: Number(img.position).valueOf(),
       }));
       formData.append("positionImage", JSON.stringify(positionImage));
     }
@@ -253,7 +261,6 @@ export const EditProductForm: FC = () => {
       <div className="grid grid-cols-3 gap-4 !mt-[unset] relative">
         {existingImages.length < 4 && (
           <div className="col-start-3">
-            {/* Add FileUploader for adding new images */}
             <FileUploader
               maxSize={10}
               handleChange={(files) => {

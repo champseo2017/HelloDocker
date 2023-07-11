@@ -26,7 +26,8 @@ interface IProductUpdate {
   description: string;
   quantity: number;
   productImages: IImageObject[];
-  positionImage: IImageObjectUpdate[]
+  positionImage: IImageObjectUpdate[];
+  deletedImagePositions: number[];
 }
 
 interface IProductGet {

@@ -89,26 +89,29 @@ export const updateProduct = async (
 
       // Update or add images at the positions provided in positionImage
       if (req.body.positionImage) {
+        console.log("product.imagePaths", product.imagePaths);
+
+        const updatedImagePaths = [...product.imagePaths]; // สร้างสำเนาของรายการรูปภาพ
+
+        const existingPositions = updatedImagePaths.map(
+          (imagePath) => imagePath.position
+        );
+
         for (const positionObject of req.body.positionImage) {
           const position = positionObject.position;
 
-          // Check if position is valid
-          if (position < 0 || position > product.imagePaths.length) {
-            createCustomError("Invalid image position.", 400);
-          }
-
-          // If image path exists at the position, update it
+          // Update the image path at the position
           // @ts-ignore
           const shiftedImagePath: IImageObject | undefined = imagePaths.shift();
           if (shiftedImagePath) {
-            if (
-              position < product.imagePaths.length &&
-              product.imagePaths[position]
-            ) {
-              product.imagePaths[position] = shiftedImagePath;
-            } else {
-              // If no image path at the position, add the image
-              product.imagePaths.splice(position, 0, shiftedImagePath);
+            // If position is within the range of existing images, update the image path
+            const existingIndex = existingPositions.indexOf(position);
+            if (existingIndex !== -1) {
+              updatedImagePaths[existingIndex] = shiftedImagePath;
+            }
+            // If position is outside the range of existing images, add the image path
+            else {
+              updatedImagePaths.push(shiftedImagePath);
             }
           } else {
             createCustomError(
@@ -117,6 +120,8 @@ export const updateProduct = async (
             );
           }
         }
+
+        product.imagePaths = updatedImagePaths; // อัปเดตรายการรูปภาพในโมเดลสินค้า
       }
     } else if (req.body.positionImage) {
       // Handle image deletion
@@ -163,7 +168,9 @@ export const updateProduct = async (
     delete updatedData.positionImage;
 
     // Update the product in the database
-    await Product.findOneAndUpdate({ _id: req.body.id }, updatedData, { new: true });
+    await Product.findOneAndUpdate({ _id: req.body.id }, updatedData, {
+      new: true,
+    });
 
     displayStatus(res, 200, "Product successfully updated", updatedData);
   } catch (error) {
