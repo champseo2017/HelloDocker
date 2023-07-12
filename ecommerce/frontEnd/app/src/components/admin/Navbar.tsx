@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import ContainerUseSignIn from "container/ContainerUseSignIn";
 
 const Navbar = () => {
   const location = useLocation();
@@ -18,7 +19,7 @@ const Navbar = () => {
           <div className="text-2xl font-bold text-grey-800 md:text-3xl">
             <Link to="/admin">Admin Panel</Link>
           </div>
-          <div className="flex space-x-4">
+          <div className="flex items-center space-x-4">
             <Link
               to="/admin"
               className={`text-gray-600 hover:text-gray-800 ${
@@ -35,6 +36,7 @@ const Navbar = () => {
             >
               Products
             </Link>
+            <ContainerUseSignIn />
           </div>
         </div>
       </div>

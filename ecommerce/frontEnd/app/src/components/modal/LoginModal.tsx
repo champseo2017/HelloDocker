@@ -2,8 +2,7 @@ import AddProductForm from "components/form/AddProductForm";
 import { Transition } from "react-transition-group";
 import { MouseEvent } from "react";
 import { MdClose } from "react-icons/md";
-import LoginForm from "components/form/LoginForm";
-
+import LoginFormModal from "components/form/LoginFormModal";
 
 type LoginModalProps = {
   isOpen: boolean;
@@ -42,17 +41,9 @@ const AddProductModal = ({ isOpen, onClose }: LoginModalProps) => {
                 </button>
               </div>
               <div className="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3
-                      className="text-lg font-medium leading-6 text-gray-900"
-                      id="modal-headline"
-                    >
-                      Login
-                    </h3>
-                    <div className="mt-2">
-                      <LoginForm />
-                    </div>
+                <div className="justify-center sm:flex sm:items-start">
+                  <div className="my-2">
+                    <LoginFormModal />
                   </div>
                 </div>
               </div>
