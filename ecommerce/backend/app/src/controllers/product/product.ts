@@ -300,7 +300,6 @@ export const addToCart = async (req: Request, res: Response) => {
   }
 };
 
-
 export const updateCart = async (req: Request, res: Response) => {
   try {
     const { user: userAuth }: any = req;
@@ -356,3 +355,52 @@ export const updateCart = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteFromCart = async (req: Request, res: Response) => {
+  try {
+    const { user: userAuth }: any = req;
+    const { productId } = req.params;
+
+    // Find the user's cart
+    let cart: ICart | null = await Cart.findOne({
+      user: userAuth?.userId,
+    }).populate({
+      path: "products.product",
+      model: "Product",
+    });
+
+    // Check if product already in the cart
+    const productInCartIndex = cart.products.findIndex(
+      (cartItem: ICartProduct) => {
+        return cartItem.product._id.toString() === productId
+      }
+    );
+
+    if (productInCartIndex === -1) {
+      // If product is not in the cart, return error
+      return createCustomError("Product not found in cart", 404);
+    }
+
+    // Find the product
+    const product: IProduct = await Product.findById(productId);
+    if (!product) {
+      return createCustomError("Product not found", 404);
+    }
+
+    // Add the quantity back to the product stock
+    await Product.updateOne(
+      { _id: productId },
+      { $inc: { quantity: cart.products[productInCartIndex].quantity } }
+    );
+
+    // Remove the product from the cart
+    await Cart.updateOne(
+      { user: userAuth?.userId },
+      { $pull: { products: { product: productId } } }
+    );
+
+    displayStatus(res, 200, "Product removed from cart successfully");
+  } catch (error) {
+    console.log("error", error)
+    displayErrorStatus(res, error);
+  }
+};

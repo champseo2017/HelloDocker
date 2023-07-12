@@ -22,7 +22,10 @@ import {
   addToCart,
   updateCartSchema,
   validateUpdateCart,
-  updateCart
+  updateCart,
+  deleteCartSchema,
+  validateDeleteCart,
+  deleteFromCart
 } from "@controllers/product";
 import { upload, errorHandlerUpload } from "@middlewares/uploadProImage";
 import { convertBodyTypes } from "@utils/convertBodyTypes";
@@ -78,7 +81,6 @@ productRoutes.get(
 productRoutes.put(
   "/add/cart",
   verifyToken,
-  checkRole("admin"),
   validateAddToCart(addToCartSchema),
   addToCart
 );
@@ -86,9 +88,15 @@ productRoutes.put(
 productRoutes.put(
   "/update/cart",
   verifyToken,
-  checkRole("admin"),
   validateUpdateCart(updateCartSchema),
   updateCart,
+);
+
+productRoutes.delete(
+  "/delete/cart/:productId",
+  verifyToken,
+  validateDeleteCart(deleteCartSchema),
+  deleteFromCart,
 );
 
 export { productRoutes };
