@@ -299,3 +299,60 @@ export const addToCart = async (req: Request, res: Response) => {
     displayErrorStatus(res, error);
   }
 };
+
+
+export const updateCart = async (req: Request, res: Response) => {
+  try {
+    const { user: userAuth }: any = req;
+    const { productId, quantity } = req.body;
+
+    // Find the user's cart or create a new one if not exist
+    let cart: ICart | null = await Cart.findOne({
+      user: userAuth?.userId,
+    }).populate({
+      path: "products.product",
+      model: "Product",
+    });
+
+    // Check if product already in the cart
+    const productInCartIndex = cart.products.findIndex(
+      (cartItem: ICartProduct) => cartItem.product._id.toString() === productId
+    );
+
+    // Find the product
+    const product: IProduct = await Product.findById(productId);
+    if (!product) {
+      return createCustomError("Product not found", 404);
+    }
+
+    // Check if product is available in stock
+    if (product.quantity < quantity) {
+      return createCustomError("Not enough product in stock", 404);
+    }
+
+    // Reduce the product quantity
+    await Product.updateOne(
+      { _id: productId },
+      { $inc: { quantity: -quantity } }
+    );
+
+    if (productInCartIndex !== -1) {
+      // If product is already in the cart, update the quantity
+      await Cart.updateOne(
+        { user: userAuth?.userId, "products.product": productId },
+        { $inc: { "products.$.quantity": quantity } }
+      );
+    } else {
+      // If product is not in the cart, add it
+      await Cart.updateOne(
+        { user: userAuth?.userId },
+        { $push: { products: { product: productId, quantity: quantity } } }
+      );
+    }
+
+    displayStatus(res, 200, "Product update to cart successfully");
+  } catch (error) {
+    displayErrorStatus(res, error);
+  }
+};
+

@@ -21,7 +21,8 @@ import {
   validateAddToCart,
   addToCart,
   updateCartSchema,
-  validateUpdateCart
+  validateUpdateCart,
+  updateCart
 } from "@controllers/product";
 import { upload, errorHandlerUpload } from "@middlewares/uploadProImage";
 import { convertBodyTypes } from "@utils/convertBodyTypes";
@@ -87,6 +88,7 @@ productRoutes.put(
   verifyToken,
   checkRole("admin"),
   validateUpdateCart(updateCartSchema),
+  updateCart,
 );
 
 export { productRoutes };
