@@ -15,7 +15,7 @@ import {
 
 const cartRoutes = Router();
 
-cartRoutes.put(
+cartRoutes.post(
   "/create",
   verifyToken,
   validateAddToCart(addToCartSchema),
