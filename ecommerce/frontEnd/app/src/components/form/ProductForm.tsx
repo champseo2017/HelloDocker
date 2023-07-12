@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, MouseEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "contexts/AuthContext";
-import LoginModal from "components/modal/LoginModal";
+import LoginModalCart from "components/modal/LoginModalCart";
 import { useCart } from "contexts/CartContext";
 import { redirect, useNavigate, useParams } from "react-router-dom";
 
@@ -14,20 +14,28 @@ interface IProductForm {
   description: string;
 }
 const ProductForm = (props: IProductForm) => {
-  const { cart, addToCart } = useCart();
+  const {
+    cart,
+    addToCart,
+    getCart,
+    quantity: useQuantity,
+    setQuantity: useSetQuantity,
+  } = useCart();
   const navigate = useNavigate();
   const params = useParams();
-  console.log("cart", cart);
+  const { id } = params;
   const { user, login, logout } = useAuth();
   const { _id, name, price, quantity: productQuantity, description } = props;
   const [quantity, setQuantity] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(null);
+
+  console.log("useQuantity", useQuantity);
 
   const updateQuantity = useCallback((e) => {
     if (e === "") {
-      setQuantity(0);
+      useSetQuantity(0);
     } else {
-      setQuantity(Math.floor(e));
+      useSetQuantity(Math.floor(e));
     }
   }, []);
 
@@ -43,31 +51,24 @@ const ProductForm = (props: IProductForm) => {
   }, [funcCheckAuth]);
 
   useEffect(() => {
-    setQuantity(productQuantity);
+    useSetQuantity(productQuantity);
     return () => {};
   }, [productQuantity]);
 
   const handleAddToCart = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
-      const { id } = params;
-
       const dataCart = {
         productId: id,
-        quantity: quantity,
+        quantity: useQuantity,
       };
       e.preventDefault();
       if (user && user.userId) {
-        // navigate("/login");
-        console.log("quantity", quantity);
-        console.log("id", id);
+        addToCart(dataCart);
       } else {
         setIsModalOpen(true);
-        if (!isModalOpen) {
-          addToCart(dataCart);
-        }
       }
     },
-    [user, quantity, cart, isModalOpen]
+    [user, useQuantity, id]
   );
 
   const handleModalClose = useCallback(() => {
@@ -86,7 +87,7 @@ const ProductForm = (props: IProductForm) => {
             name="quantity"
             min="1"
             step="1"
-            value={quantity}
+            value={useQuantity}
             onChange={(e) => updateQuantity(e.target.value)}
             className="w-16 text-gray-900 border border-gray-300 rounded-sm form-input focus:border-palette-light focus:ring-palette-light"
           />
@@ -104,7 +105,7 @@ const ProductForm = (props: IProductForm) => {
         <FontAwesomeIcon icon={faShoppingCart} className="w-5 ml-2" />
       </button>
       {isModalOpen && (
-        <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
+        <LoginModalCart isOpen={isModalOpen} onClose={handleModalClose} />
       )}
     </div>
   );

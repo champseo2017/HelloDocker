@@ -30,7 +30,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const login = useCallback((token: string) => {
+  const login = useCallback(async(token: string) => {
     localStorage.setItem("token", token);
     const decoded: User = jwtDecode(token);
     setUser({ ...decoded, tokenExpire: false });

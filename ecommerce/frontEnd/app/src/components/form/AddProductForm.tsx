@@ -46,7 +46,7 @@ const AddProductForm: FC = () => {
         formData.append(key, data[key]);
       }
     });
-    const response = await productController().add(formData);
+    const response = await productController().create(formData);
     const { message, status } = response;
     if (status === 200) {
       useSuccessToast(message);
@@ -63,7 +63,7 @@ const AddProductForm: FC = () => {
     >
       <div>
         <label
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block mb-1 text-sm font-medium text-gray-700"
           htmlFor="name"
         >
           Name
@@ -77,7 +77,7 @@ const AddProductForm: FC = () => {
         {errors.name && <span>This field is required</span>}
 
         <label
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block mb-1 text-sm font-medium text-gray-700"
           htmlFor="price"
         >
           Price
@@ -91,7 +91,7 @@ const AddProductForm: FC = () => {
         {errors.price && <span>This field is required</span>}
 
         <label
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block mb-1 text-sm font-medium text-gray-700"
           htmlFor="description"
         >
           Description
@@ -106,7 +106,7 @@ const AddProductForm: FC = () => {
         {errors.description && <span>This field is required</span>}
 
         <label
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block mb-1 text-sm font-medium text-gray-700"
           htmlFor="quantity"
         >
           Quantity

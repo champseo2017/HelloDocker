@@ -1,11 +1,26 @@
-import React from "react";
+import { useMemo } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import ContainerUseSignIn from 'container/ContainerUseSignIn'
+import ContainerUseSignIn from "container/ContainerUseSignIn";
+import { calculateTotalQuantity } from "utils/calculateTotalQuantity";
+import { useCart } from "contexts/CartContext";
 
 const Navbar = () => {
+  const {
+    cart,
+    addToCart,
+    getCart,
+    quantity: useQuantity,
+    setQuantity: useSetQuantity,
+  } = useCart();
+
+  const resultQuantity = useMemo(() => {
+    const res = calculateTotalQuantity(cart);
+    return res;
+  }, [cart]);
+
   return (
     <header className="sticky top-0 z-20 bg-white border-b border-palette-lighter">
       <div className="flex items-center justify-between max-w-6xl px-6 py-4 mx-auto">
@@ -32,21 +47,12 @@ const Navbar = () => {
                 // @ts-ignore
                 icon={faShoppingCart}
               />
-              <div
-                    className="absolute top-0 right-[2rem] px-2 py-1 text-xs font-semibold text-gray-900 transform translate-x-10 -translate-y-3 bg-yellow-300 rounded-full"
-                  >
-                    !
-                  </div>
-              {/* {
-                cartItems === 0 ?
-                  null
-                  :
-                  <div
-                    className="absolute top-0 right-0 px-2 py-1 text-xs font-semibold text-gray-900 transform translate-x-10 -translate-y-3 bg-yellow-300 rounded-full"
-                  >
-                    {cartItems}
-                  </div>
-              } */}
+
+              {resultQuantity === 0 ? null : (
+                <div className="absolute top-0 right-[2rem] px-2 py-1 text-xs font-semibold text-gray-900 transform translate-x-10 -translate-y-3 bg-yellow-300 rounded-full">
+                  {resultQuantity}
+                </div>
+              )}
             </Link>
           </div>
           <ContainerUseSignIn />

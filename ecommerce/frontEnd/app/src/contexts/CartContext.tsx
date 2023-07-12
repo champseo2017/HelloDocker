@@ -6,65 +6,59 @@ import React, {
   useState,
 } from "react";
 
-interface IProduct {
-  productId: string;
-  quantity: number;
-}
-
-interface IImagePath {
-  position: number;
-  url: string;
-}
-
-interface IProductData {
-  _id: string;
-  name: string;
-  price: number;
-  description: string;
-  quantity: number;
-  imagePaths: IImagePath[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface ICartProduct {
-  product: IProductData;
-  quantity: number;
-}
-
-interface IDataFetchCart {
-  _id: string;
-  products: ICartProduct[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { cartController } from "services/apiController/cart";
+import { useSuccessToast } from "hooks/toast/useSuccessToast";
+import { redirect, useNavigate, useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import {
+  IProduct,
+  IDataFetchCart,
+} from "type/component";
 
 interface ICartContext {
   cart: IDataFetchCart;
   addToCart: (product: IProduct) => void;
   getCart: () => void;
+  quantity: number;
+  setQuantity: (quantity: number) => void;
 }
 
 const CartContext = createContext<ICartContext | undefined>(undefined);
 
 const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<IDataFetchCart | null>(null);
+  const [addCart, setAddCart] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState<number>(0);
+  const navigate = useNavigate();
 
   const addToCart = useCallback(async (product: IProduct) => {
-    console.log("product", product)
+    const uqId = uuidv4();
+    const result = await cartController().create(product);
+    if (result?.status === 200) {
+      const { message } = result;
+      useSuccessToast(message);
+      navigate("/cart");
+      setAddCart(uqId);
+    }
   }, []);
 
-  const getCart = () => {
-    // Code to get cart data.
-    // You can use an API request here.
-  };
+  const getCart = useCallback(async () => {
+    const result = await cartController().get();
+    if (result?.data) {
+      const { data } = result;
+      setCart(data);
+    }
+  }, [addCart]);
 
   useEffect(() => {
     getCart();
-  }, []);
+    return () => {};
+  }, [getCart]);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, getCart }}>
+    <CartContext.Provider
+      value={{ cart, addToCart, getCart, quantity, setQuantity }}
+    >
       {children}
     </CartContext.Provider>
   );
