@@ -20,6 +20,13 @@ const responseError = (error: any) => {
         data: null,
         message: response?.data?.message,
       };
+    } else {
+      useErrorToast(error?.message);
+      return {
+        status: 500,
+        data: null,
+        message: "No data",
+      };
     }
   }
   useErrorToast(response?.data?.message);

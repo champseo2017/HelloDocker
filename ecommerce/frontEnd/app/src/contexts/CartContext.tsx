@@ -19,6 +19,7 @@ interface ICartContext {
   quantity: number;
   setQuantity: (quantity: number) => void;
   updateToCart: (product: IProduct) => void;
+  deleteToCart: (id: string) => void;
 }
 
 const CartContext = createContext<ICartContext | undefined>(undefined);
@@ -50,6 +51,16 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  const deleteToCart = useCallback(async (id: string) => {
+    const uqId = uuidv4();
+    const result = await cartController().delete(id);
+    if (result?.status === 200) {
+      const { message } = result;
+      useSuccessToast(message);
+      setWatchCart(uqId);
+    }
+  }, []);
+
   const getCart = useCallback(async () => {
     const result = await cartController().get();
     if (result?.data) {
@@ -65,7 +76,15 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, getCart, quantity, setQuantity, updateToCart }}
+      value={{
+        cart,
+        addToCart,
+        getCart,
+        quantity,
+        setQuantity,
+        updateToCart,
+        deleteToCart,
+      }}
     >
       {children}
     </CartContext.Provider>

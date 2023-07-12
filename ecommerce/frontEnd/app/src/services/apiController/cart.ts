@@ -15,11 +15,8 @@ export const cartController = () => {
     get: async (): Promise<IResponse> => {
       return (await serviceToken()).get(`/cart`);
     },
-    // getById: async (id: string): Promise<IResponse> => {
-    //   return (await serviceNoneToken()).get(`/product/${id}`);
-    // },
-    // delete: async (id: string): Promise<IResponse> => {
-    //   return (await serviceToken()).delete(`/product/delete/${id}`);
-    // },
+    delete: async (id: string): Promise<IResponse> => {
+      return (await serviceToken()).delete(`/cart/${id}`);
+    },
   };
 };

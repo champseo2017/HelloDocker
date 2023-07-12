@@ -15,6 +15,7 @@ const CartTable = () => {
     quantity: useQuantity,
     setQuantity: useSetQuantity,
     updateToCart,
+    deleteToCart,
   } = useCart();
 
   const resultSubtotal = useMemo(() => {
@@ -31,7 +32,15 @@ const CartTable = () => {
         productId: pId,
         quantity: qRes,
       };
-      updateToCart(data)
+      updateToCart(data);
+    },
+    []
+  );
+
+  const handlersDeleteCart = useCallback(
+    (e: MouseEvent<HTMLButtonElement>, productId: string) => {
+      e.preventDefault();
+      deleteToCart(productId);
     },
     []
   );
@@ -54,7 +63,7 @@ const CartTable = () => {
         </thead>
         <tbody className="divide-y divide-palette-lighter">
           {cart &&
-            cart?.products.length &&
+            cart?.products.length ?
             cart?.products.map((item, index) => (
               <tr
                 key={index}
@@ -104,7 +113,9 @@ const CartTable = () => {
                   <button
                     aria-label="delete-item"
                     className=""
-                    //   onClick={() => updateItem(item.variantId, 0)}
+                    onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                      handlersDeleteCart(e, item.product._id)
+                    }
                   >
                     <FontAwesomeIcon
                       // @ts-ignore
@@ -114,7 +125,7 @@ const CartTable = () => {
                   </button>
                 </td>
               </tr>
-            ))}
+            )) : null}
           {resultSubtotal === 0 ? null : (
             <tr className="text-center">
               <td></td>

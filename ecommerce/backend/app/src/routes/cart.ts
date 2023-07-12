@@ -30,7 +30,7 @@ cartRoutes.put(
 );
 
 cartRoutes.delete(
-  "/delete/:productId",
+  "/:productId",
   verifyToken,
   validateDeleteCart(deleteCartSchema),
   deleteFromCart
