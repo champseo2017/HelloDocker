@@ -404,3 +404,34 @@ export const deleteFromCart = async (req: Request, res: Response) => {
     displayErrorStatus(res, error);
   }
 };
+
+
+export const getCart = async (req: Request, res: Response) => {
+  try {
+    const { user: userAuth }: any = req;
+
+    // Find the user's cart
+    let cart: ICart | null = await Cart.findOne({
+      user: userAuth?.userId,
+    }).populate({
+      path: "products.product",
+      model: "Product",
+    }).lean();
+
+    if (!cart) {
+      return createCustomError("Cart not found", 404);
+    }
+
+    // Remove the '__v' field from each product in the cart
+    cart.products.forEach(product => {
+      product.product = removeUnwantedFields(product.product, ['__v']);
+    });
+
+    // Remove the '__v' field from the cart data
+    cart = removeUnwantedFields(cart, ['__v', 'user']);
+
+    displayStatus(res, 200, "Cart retrieved successfully", cart);
+  } catch (error) {
+    displayErrorStatus(res, error);
+  }
+};

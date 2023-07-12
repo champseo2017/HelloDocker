@@ -25,7 +25,8 @@ import {
   updateCart,
   deleteCartSchema,
   validateDeleteCart,
-  deleteFromCart
+  deleteFromCart,
+  getCart
 } from "@controllers/product";
 import { upload, errorHandlerUpload } from "@middlewares/uploadProImage";
 import { convertBodyTypes } from "@utils/convertBodyTypes";
@@ -97,6 +98,12 @@ productRoutes.delete(
   verifyToken,
   validateDeleteCart(deleteCartSchema),
   deleteFromCart,
+);
+
+productRoutes.get(
+  "/get/cart",
+  verifyToken,
+  getCart,
 );
 
 export { productRoutes };
