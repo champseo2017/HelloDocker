@@ -16,7 +16,12 @@ import {
   deleteProduct,
   findProductSchema,
   validateFindProduct,
-  findProductById
+  findProductById,
+  addToCartSchema,
+  validateAddToCart,
+  addToCart,
+  updateCartSchema,
+  validateUpdateCart
 } from "@controllers/product";
 import { upload, errorHandlerUpload } from "@middlewares/uploadProImage";
 import { convertBodyTypes } from "@utils/convertBodyTypes";
@@ -67,6 +72,21 @@ productRoutes.get(
   "/:id",
   validateFindProduct(findProductSchema),
   findProductById,
+);
+
+productRoutes.put(
+  "/add/cart",
+  verifyToken,
+  checkRole("admin"),
+  validateAddToCart(addToCartSchema),
+  addToCart
+);
+
+productRoutes.put(
+  "/update/cart",
+  verifyToken,
+  checkRole("admin"),
+  validateUpdateCart(updateCartSchema),
 );
 
 export { productRoutes };

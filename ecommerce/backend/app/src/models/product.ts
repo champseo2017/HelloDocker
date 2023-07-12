@@ -17,8 +17,6 @@ const ProductSchema: Schema = new Schema(
     description: { type: String },
     quantity: { type: Number, default: 0 },
     imagePaths: { type: [ImageObjectSchema], default: [] },
-    cartQuantity: { type: Number, default: 0 }, // จำนวนสินค้าที่ถูกเพิ่มในตะกร้า
-    isAddedToCart: { type: Boolean, default: false }, // สถานะการเพิ่มลงในตะกร้าสินค้า
   },
   {
     timestamps: true,

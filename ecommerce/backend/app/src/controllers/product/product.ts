@@ -8,7 +8,11 @@ import { unlinkAsync } from "@utils/unlinkAsync";
 import { createCustomError } from "@utils/createCustomError";
 import { displayErrorStatus } from "@utils/displayErrorStatus";
 import { urlToFilePath } from "@utils/urlToFilePath";
-import { IImageObject } from "@type/models";
+import { IImageObject, ICartProduct, ICart } from "@type/models";
+import { User } from "@models/user";
+import { IProduct, IUser } from "@type/controller";
+import { Cart } from "@models/cart";
+import { Document as MongooseDocument } from "mongoose";
 
 export const addProduct = async (
   req: Request,
@@ -231,6 +235,66 @@ export const findProductById = async (req: Request, res: Response) => {
     const result = removeUnwantedFields(products.toObject(), ["__v"]);
 
     displayStatus(res, 200, "Product found successfully", result);
+  } catch (error) {
+    displayErrorStatus(res, error);
+  }
+};
+
+export const addToCart = async (req: Request, res: Response) => {
+  try {
+    const { user: userAuth }: any = req;
+    const { productId, quantity } = req.body;
+
+    // Find the user's cart or create a new one if not exist
+    let cart: ICart | null = await Cart.findOne({
+      user: userAuth?.userId,
+    }).populate({
+      path: "products.product",
+      model: "Product",
+    });
+
+    if (!cart) {
+      let cartDoc = new Cart({ user: userAuth?.userId, products: [] });
+      await cartDoc.save();
+      cart = cartDoc.toObject() as ICart;
+    }
+
+    // Check if product already in the cart
+    const productInCart = cart.products.some(
+      (cartItem: ICartProduct) => cartItem.product._id.toString() === productId
+    );
+
+    if (productInCart) {
+      return createCustomError("Product already added to cart", 404);
+    }
+
+    // Find the product
+    const product: IProduct = await Product.findById(productId);
+    if (!product) {
+      return createCustomError("Product not found", 404);
+    }
+
+    // Check if product is available in stock
+    if (product.quantity < quantity) {
+      return createCustomError("Not enough product in stock", 404);
+    }
+
+    // Reduce the product quantity
+    await Product.updateOne(
+      { _id: productId },
+      { $inc: { quantity: -quantity } }
+    );
+
+    // Add the product to the cart
+    cart.products.push({ product: productId, quantity: quantity });
+
+    // Update the cart
+    await Cart.updateOne(
+      { user: userAuth?.userId },
+      { $push: { products: { product: productId, quantity: quantity } } }
+    );
+
+    displayStatus(res, 200, "Product added to cart successfully");
   } catch (error) {
     displayErrorStatus(res, error);
   }
