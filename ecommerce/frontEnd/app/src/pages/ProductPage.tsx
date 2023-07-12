@@ -24,18 +24,20 @@ const ProductPage = () => {
   const fetchData = async () => {
     const response = await productController().getById(id);
     const { data } = response;
-    setProducts(data);
+
+    if (data) {
+      setProducts(data);
+    }
   };
 
   useEffect(() => {
     fetchData();
     const element = document.documentElement || document.body;
-    element.scrollIntoView({ behavior: 'smooth' });
-    console.log("element", element)
+    element.scrollIntoView({ behavior: "smooth" });
+    console.log("element", element);
     return () => {};
   }, []);
 
-  
   return (
     <div className="min-h-screen py-12 sm:pt-20">
       <ProductSection

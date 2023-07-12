@@ -32,6 +32,11 @@ const Navbar = () => {
                 // @ts-ignore
                 icon={faShoppingCart}
               />
+              <div
+                    className="absolute top-0 right-[2rem] px-2 py-1 text-xs font-semibold text-gray-900 transform translate-x-10 -translate-y-3 bg-yellow-300 rounded-full"
+                  >
+                    !
+                  </div>
               {/* {
                 cartItems === 0 ?
                   null

@@ -10,7 +10,7 @@ export const productController = () => {
   return {
     add: async (data: FormData): Promise<IResponse> => {
       const formData = data;
-      return (await serviceToken()).post(`/product/add`, formData, objHeader);
+      return (await serviceToken()).post(`/product/create`, formData, objHeader);
     },
     update: async (data: FormData): Promise<IResponse> => {
       const formData = data;

@@ -17,23 +17,13 @@ import {
   findProductSchema,
   validateFindProduct,
   findProductById,
-  addToCartSchema,
-  validateAddToCart,
-  addToCart,
-  updateCartSchema,
-  validateUpdateCart,
-  updateCart,
-  deleteCartSchema,
-  validateDeleteCart,
-  deleteFromCart,
-  getCart
 } from "@controllers/product";
 import { upload, errorHandlerUpload } from "@middlewares/uploadProImage";
 import { convertBodyTypes } from "@utils/convertBodyTypes";
 
 const productRoutes = Router();
 productRoutes.post(
-  "/add",
+  "/create",
   verifyToken,
   checkRole("admin"),
   upload(),
@@ -53,7 +43,7 @@ productRoutes.put(
   errorHandlerUpload(),
   convertBodyTypes({
     quantity: "number",
-    positionImage: "array"
+    positionImage: "array",
   }),
   validateUpdateProduct(productUpdateSchema),
   updateProduct
@@ -62,7 +52,7 @@ productRoutes.put(
 productRoutes.get(
   "/",
   validateGetListProduct(getListProductSchema),
-  getListProduct,
+  getListProduct
 );
 
 productRoutes.delete(
@@ -76,34 +66,7 @@ productRoutes.delete(
 productRoutes.get(
   "/:id",
   validateFindProduct(findProductSchema),
-  findProductById,
-);
-
-productRoutes.put(
-  "/add/cart",
-  verifyToken,
-  validateAddToCart(addToCartSchema),
-  addToCart
-);
-
-productRoutes.put(
-  "/update/cart",
-  verifyToken,
-  validateUpdateCart(updateCartSchema),
-  updateCart,
-);
-
-productRoutes.delete(
-  "/delete/cart/:productId",
-  verifyToken,
-  validateDeleteCart(deleteCartSchema),
-  deleteFromCart,
-);
-
-productRoutes.get(
-  "/get/cart",
-  verifyToken,
-  getCart,
+  findProductById
 );
 
 export { productRoutes };
