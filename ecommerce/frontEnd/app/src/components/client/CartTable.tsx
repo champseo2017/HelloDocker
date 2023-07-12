@@ -1,23 +1,11 @@
+import { ChangeEvent, MouseEvent } from "react";
 import { useCart } from "contexts/CartContext";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import Price from "components/client/Price";
 import { calculateSubtotal } from "utils/calculateSubtotal";
-import { useMemo } from "react";
-
-/* 
-
-_id: string;
-  name: string;
-  price: number;
-  description: string;
-  quantity: number;
-  imagePaths: IImagePath[];
-  createdAt: string;
-  updatedAt: string;
-
-*/
+import { useCallback, useMemo } from "react";
 
 const CartTable = () => {
   const {
@@ -26,6 +14,7 @@ const CartTable = () => {
     getCart,
     quantity: useQuantity,
     setQuantity: useSetQuantity,
+    updateToCart,
   } = useCart();
 
   const resultSubtotal = useMemo(() => {
@@ -33,7 +22,19 @@ const CartTable = () => {
     return res;
   }, [cart]);
 
-  console.log("cart", cart);
+  const handlersUpdateCart = useCallback(
+    (e: ChangeEvent<HTMLInputElement>, productId: string) => {
+      e.preventDefault();
+      const qRes = parseInt(e.target.value);
+      const pId = productId;
+      const data = {
+        productId: pId,
+        quantity: qRes,
+      };
+      updateToCart(data)
+    },
+    []
+  );
 
   return (
     <div className="w-full max-w-2xl mx-auto my-4 min-h-80 sm:my-8">
@@ -42,6 +43,9 @@ const CartTable = () => {
           <tr className="text-xs uppercase border-b sm:text-sm text-palette-primary border-palette-light">
             <th className="px-6 py-4 font-normal font-primary">Product</th>
             <th className="px-6 py-4 font-normal font-primary">Quantity</th>
+            <th className="px-6 py-4 font-normal font-primary">
+              Number of items
+            </th>
             <th className="hidden px-6 py-4 font-normal font-primary sm:table-cell">
               Price
             </th>
@@ -80,9 +84,14 @@ const CartTable = () => {
                     min="1"
                     step="1"
                     value={item.quantity}
-                    onChange={(e) => console.log("")}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handlersUpdateCart(e, item.product._id)
+                    }
                     className="w-16 text-gray-900 border border-gray-300 rounded-sm form-input focus:border-palette-light focus:ring-palette-light"
                   />
+                </td>
+                <td className="px-4 py-4 font-medium font-primary sm:px-6">
+                  {item.product.quantity}
                 </td>
                 <td className="hidden px-4 py-4 text-base font-light font-primary sm:px-6 sm:table-cell">
                   <Price

@@ -4,13 +4,14 @@ import { IResponse, ICartCreate } from "../typeApi";
 export const cartController = () => {
   return {
     create: async (data: ICartCreate): Promise<IResponse> => {
-      const formData = data;
-      return (await serviceToken()).post(`/cart/create`, formData);
+      return (await serviceToken()).post(`/cart/create`, data);
     },
-    // update: async (data: FormData): Promise<IResponse> => {
-    //   const formData = data;
-    //   return (await serviceToken()).put(`/product/update`, formData, objHeader);
-    // },
+    update: async (data: {
+      productId: string;
+      quantity: number;
+    }): Promise<IResponse> => {
+      return (await serviceToken()).put(`/cart/update`, data);
+    },
     get: async (): Promise<IResponse> => {
       return (await serviceToken()).get(`/cart`);
     },

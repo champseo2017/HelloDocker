@@ -10,10 +10,7 @@ import { cartController } from "services/apiController/cart";
 import { useSuccessToast } from "hooks/toast/useSuccessToast";
 import { redirect, useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import {
-  IProduct,
-  IDataFetchCart,
-} from "type/component";
+import { IProduct, IDataFetchCart } from "type/component";
 
 interface ICartContext {
   cart: IDataFetchCart;
@@ -21,13 +18,14 @@ interface ICartContext {
   getCart: () => void;
   quantity: number;
   setQuantity: (quantity: number) => void;
+  updateToCart: (product: IProduct) => void;
 }
 
 const CartContext = createContext<ICartContext | undefined>(undefined);
 
 const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<IDataFetchCart | null>(null);
-  const [addCart, setAddCart] = useState<string | null>(null);
+  const [watchCart, setWatchCart] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(0);
   const navigate = useNavigate();
 
@@ -38,7 +36,17 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
       const { message } = result;
       useSuccessToast(message);
       navigate("/cart");
-      setAddCart(uqId);
+      setWatchCart(uqId);
+    }
+  }, []);
+
+  const updateToCart = useCallback(async (product: IProduct) => {
+    const uqId = uuidv4();
+    const result = await cartController().update(product);
+    if (result?.status === 200) {
+      const { message } = result;
+      useSuccessToast(message);
+      setWatchCart(uqId);
     }
   }, []);
 
@@ -48,7 +56,7 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
       const { data } = result;
       setCart(data);
     }
-  }, [addCart]);
+  }, [watchCart]);
 
   useEffect(() => {
     getCart();
@@ -57,7 +65,7 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, getCart, quantity, setQuantity }}
+      value={{ cart, addToCart, getCart, quantity, setQuantity, updateToCart }}
     >
       {children}
     </CartContext.Provider>

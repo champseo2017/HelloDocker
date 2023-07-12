@@ -8,7 +8,6 @@ import { ICartProduct, ICart } from "@type/models";
 import { IProduct } from "@type/controller";
 import { Cart } from "@models/cart";
 
-
 export const addToCart = async (req: Request, res: Response) => {
   try {
     const { user: userAuth }: any = req;
@@ -90,35 +89,36 @@ export const updateCart = async (req: Request, res: Response) => {
     // Find the product
     const product: IProduct = await Product.findById(productId);
     if (!product) {
-      return createCustomError("Product not found", 404);
+      createCustomError("Product not found", 404);
     }
-
-    // Check if product is available in stock
-    if (product.quantity < quantity) {
-      return createCustomError("Not enough product in stock", 404);
-    }
-
-    // Reduce the product quantity
-    await Product.updateOne(
-      { _id: productId },
-      { $inc: { quantity: -quantity } }
-    );
 
     if (productInCartIndex !== -1) {
       // If product is already in the cart, update the quantity
+
+      // Find out the difference in quantity
+      let oldQuantity = cart.products[productInCartIndex].quantity;
+      let diff = quantity - oldQuantity;
+
+      // Check if there's enough product in stock to fulfill the new quantity
+      if (product.quantity < diff) {
+        return createCustomError("Not enough product in stock", 404);
+      }
+
+      // Reduce the product quantity in stock
+      await Product.updateOne(
+        { _id: productId },
+        { $inc: { quantity: -diff } }
+      );
+
+      // Update the quantity in the cart
       await Cart.updateOne(
         { user: userAuth?.userId, "products.product": productId },
-        { $inc: { "products.$.quantity": quantity } }
+        { $set: { "products.$.quantity": quantity } }
       );
+      displayStatus(res, 200, "Product update to cart successfully");
     } else {
-      // If product is not in the cart, add it
-      await Cart.updateOne(
-        { user: userAuth?.userId },
-        { $push: { products: { product: productId, quantity: quantity } } }
-      );
+      createCustomError("Product not found", 404);
     }
-
-    displayStatus(res, 200, "Product update to cart successfully");
   } catch (error) {
     displayErrorStatus(res, error);
   }
@@ -140,7 +140,7 @@ export const deleteFromCart = async (req: Request, res: Response) => {
     // Check if product already in the cart
     const productInCartIndex = cart.products.findIndex(
       (cartItem: ICartProduct) => {
-        return cartItem.product._id.toString() === productId
+        return cartItem.product._id.toString() === productId;
       }
     );
 
@@ -169,11 +169,10 @@ export const deleteFromCart = async (req: Request, res: Response) => {
 
     displayStatus(res, 200, "Product removed from cart successfully");
   } catch (error) {
-    console.log("error", error)
+    console.log("error", error);
     displayErrorStatus(res, error);
   }
 };
-
 
 export const getCart = async (req: Request, res: Response) => {
   try {
@@ -182,22 +181,24 @@ export const getCart = async (req: Request, res: Response) => {
     // Find the user's cart
     let cart: ICart | null = await Cart.findOne({
       user: userAuth?.userId,
-    }).populate({
-      path: "products.product",
-      model: "Product",
-    }).lean();
+    })
+      .populate({
+        path: "products.product",
+        model: "Product",
+      })
+      .lean();
 
     if (!cart) {
       return createCustomError("Cart not found", 404);
     }
 
     // Remove the '__v' field from each product in the cart
-    cart.products.forEach(product => {
-      product.product = removeUnwantedFields(product.product, ['__v']);
+    cart.products.forEach((product) => {
+      product.product = removeUnwantedFields(product.product, ["__v"]);
     });
 
     // Remove the '__v' field from the cart data
-    cart = removeUnwantedFields(cart, ['__v', 'user']);
+    cart = removeUnwantedFields(cart, ["__v", "user"]);
 
     displayStatus(res, 200, "Cart retrieved successfully", cart);
   } catch (error) {
