@@ -12,7 +12,7 @@ const allowedOrigins = [urlFrontEnd];
 
 const middlewaresConfig = (app: Express) => {
   // Serve static files from the "uploads" directory
-  app.use('/uploads', express.static(path.join(__dirname, '../controllers/product/uploads')));
+  app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
   app.use(urlencoded({ extended: true }));
   app.use(json());

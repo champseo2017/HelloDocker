@@ -2,7 +2,7 @@
 app/node_modules
 npm-debug.log
 dist
-app/src/controllers/product/uploads
+app/src/uploads
 
 # Docker
 *.env

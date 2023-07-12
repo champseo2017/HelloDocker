@@ -11,7 +11,7 @@ import { displayErrorStatus } from "@utils/displayErrorStatus";
 export const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Define the directory to save the uploaded files
-    const dir = path.join(__dirname, "../controllers/product", "uploads");
+    const dir = path.join(__dirname, "../", "uploads");
 
     // Check if directory exists, if not then create the directory
     if (!fs.existsSync(dir)) {
