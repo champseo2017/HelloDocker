@@ -11,6 +11,8 @@ import { useSuccessToast } from "hooks/toast/useSuccessToast";
 import { redirect, useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { IProduct, IDataFetchCart } from "type/component";
+import { timeout } from "utils/timeout";
+import { useAuth } from "./AuthContext";
 
 interface ICartContext {
   cart: IDataFetchCart;
@@ -26,6 +28,7 @@ interface ICartContext {
 const CartContext = createContext<ICartContext | undefined>(undefined);
 
 const CartProvider = ({ children }: { children: React.ReactNode }) => {
+  const { user, login, logout } = useAuth();
   const [cart, setCart] = useState<IDataFetchCart | null>(null);
   const [watchCart, setWatchCart] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(0);
@@ -33,12 +36,14 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   const getCart = useCallback(async () => {
-    const result = await cartController().get();
-    if (result?.data) {
-      const { data } = result;
-      setCart(data);
+    if (user && user?.userId) {
+      const result = await cartController().get();
+      if (result?.data) {
+        const { data } = result;
+        setCart(data);
+      }
     }
-  }, [watchCart]);
+  }, [watchCart, user]);
 
   const addToCart = useCallback(async (product: IProduct) => {
     const uqId = uuidv4();
@@ -48,41 +53,37 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
       useSuccessToast(message);
       navigate("/cart");
       setWatchCart(uqId);
-      getCart()
     }
   }, []);
 
   const updateToCart = useCallback(async (product: IProduct) => {
-    setLoadingCart(true)
+    setLoadingCart(true);
     const uqId = uuidv4();
     const result = await cartController().update(product);
-    setLoadingCart(false)
+    setLoadingCart(false);
     if (result?.status === 200) {
       const { message } = result;
       useSuccessToast(message);
       setWatchCart(uqId);
-      getCart()
     }
   }, []);
 
   const deleteToCart = useCallback(async (id: string) => {
-    setLoadingCart(true)
+    setLoadingCart(true);
     const uqId = uuidv4();
     const result = await cartController().delete(id);
-    setLoadingCart(false)
+    setLoadingCart(false);
     if (result?.status === 200) {
       const { message } = result;
       useSuccessToast(message);
       setWatchCart(uqId);
-      getCart()
     }
   }, []);
 
-
-  // useEffect(() => {
-  //   getCart();
-  //   return () => {};
-  // }, [getCart]);
+  useEffect(() => {
+    getCart();
+    return () => {};
+  }, [getCart]);
 
   return (
     <CartContext.Provider
@@ -94,7 +95,7 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
         setQuantity,
         updateToCart,
         deleteToCart,
-        loadingCart
+        loadingCart,
       }}
     >
       {children}

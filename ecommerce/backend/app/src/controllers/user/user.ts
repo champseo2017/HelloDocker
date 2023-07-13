@@ -5,6 +5,7 @@ import { User } from "@models/user";
 import { IRegisterRequest, ILoginRequest } from "@type/controller";
 import { removeUnwantedFields } from "@utils/removeUnwantedFields";
 import { generateJwtToken } from "@utils/generateJwtToken";
+import { Cart } from "@models/cart";
 
 export const registerUser = async (
   req: IRegisterRequest,
@@ -27,6 +28,14 @@ export const registerUser = async (
 
     // Save the user to the database
     const savedUser = await newUser.save();
+    // Create a new cart for the user
+    const newCart = new Cart({
+      user: savedUser._id,
+    });
+
+    // Save the cart to the database
+    await newCart.save();
+
     const result = removeUnwantedFields(savedUser.toObject(), [
       "_id",
       "createdAt",

@@ -23,12 +23,12 @@ const Navbar = () => {
     return res;
   }, [cart]);
 
-  useEffect(() => {
-    if (user && user?.userId) {
-      getCart();
-    }
-    return () => {};
-  }, [user]);
+  // useEffect(() => {
+  //   if (user && user?.userId) {
+  //     getCart();
+  //   }
+  //   return () => {};
+  // }, [user]);
 
   return (
     <header className="sticky top-0 z-20 bg-white border-b border-palette-lighter">

@@ -17,12 +17,12 @@ const CartPage = () => {
     loadingCart
   } = useCart();
 
-  useEffect(() => {
-    if (user && user?.userId) {
-      getCart();
-    }
-    return () => {};
-  }, [user]);
+  // useEffect(() => {
+  //   if (user && user?.userId) {
+  //     getCart();
+  //   }
+  //   return () => {};
+  // }, [user]);
 
   return (
     <div className="container min-h-screen mx-auto mb-20">
