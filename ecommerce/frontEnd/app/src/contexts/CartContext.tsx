@@ -23,6 +23,7 @@ interface ICartContext {
   updateToCart: (product: IProduct) => void;
   deleteToCart: (id: string) => void;
   loadingCart: boolean;
+  setCart: (data: IDataFetchCart | null) => void
 }
 
 const CartContext = createContext<ICartContext | undefined>(undefined);
@@ -89,6 +90,7 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
     <CartContext.Provider
       value={{
         cart,
+        setCart,
         addToCart,
         getCart,
         quantity,

@@ -23,13 +23,6 @@ const Navbar = () => {
     return res;
   }, [cart]);
 
-  // useEffect(() => {
-  //   if (user && user?.userId) {
-  //     getCart();
-  //   }
-  //   return () => {};
-  // }, [user]);
-
   return (
     <header className="sticky top-0 z-20 bg-white border-b border-palette-lighter">
       <div className="flex items-center justify-between max-w-6xl px-6 py-4 mx-auto">

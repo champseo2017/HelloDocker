@@ -7,6 +7,8 @@ import {
 } from "react";
 import jwtDecode from "jwt-decode";
 import dayjs from "dayjs";
+import { redirect, useNavigate, useParams } from "react-router-dom";
+import {useCart} from './CartContext'
 
 interface User {
   userId: string;
@@ -29,6 +31,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  
 
   const login = useCallback(async(token: string) => {
     localStorage.setItem("token", token);
