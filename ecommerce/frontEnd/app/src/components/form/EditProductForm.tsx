@@ -304,7 +304,9 @@ export const EditProductForm: FC = () => {
                 addNewImages(files);
               }}
               types={fileTypes}
-              classes="!min-w-[195px]"
+              classes="!min-w-[195px] upload-image-edit"
+              id="upload-image-edit"
+              name="upload-image-edit"
             />
           </div>
         )}
