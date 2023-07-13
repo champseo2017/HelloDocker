@@ -9,7 +9,9 @@ import {
 } from "@controllers/user";
 
 const userRoutes = Router();
+
 userRoutes.post("/reg", validateUserReg(userRegSchema), registerUser);
+
 userRoutes.post("/login", validateUserLogin(userLoginSchema), loginUser);
 
 export { userRoutes };

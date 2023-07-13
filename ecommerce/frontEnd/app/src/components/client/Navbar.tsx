@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
@@ -6,8 +6,10 @@ import { Link } from "react-router-dom";
 import ContainerUseSignIn from "container/ContainerUseSignIn";
 import { calculateTotalQuantity } from "utils/calculateTotalQuantity";
 import { useCart } from "contexts/CartContext";
+import { useAuth } from "contexts/AuthContext";
 
 const Navbar = () => {
+  const { user, login, logout } = useAuth();
   const {
     cart,
     addToCart,
@@ -20,6 +22,13 @@ const Navbar = () => {
     const res = calculateTotalQuantity(cart);
     return res;
   }, [cart]);
+
+  useEffect(() => {
+    if (user && user?.userId) {
+      getCart();
+    }
+    return () => {};
+  }, [user]);
 
   return (
     <header className="sticky top-0 z-20 bg-white border-b border-palette-lighter">
