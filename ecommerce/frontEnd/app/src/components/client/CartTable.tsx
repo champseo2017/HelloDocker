@@ -62,71 +62,71 @@ const CartTable = () => {
           </tr>
         </thead>
         <tbody className="divide-y divide-palette-lighter">
-          {cart &&
-            cart?.products.length ?
-            cart?.products.map((item, index) => (
-              <tr
-                key={index}
-                className="text-sm text-center text-gray-600 sm:text-base"
-              >
-                <td className="flex items-center px-4 py-4 font-medium font-primary sm:px-6">
-                  <img
-                    src={item.product.imagePaths[0].url}
-                    alt={item.product.name}
-                    height={64}
-                    width={64}
-                    className={`hidden sm:inline-flex`}
-                  />
-                  <Link
-                    className="pt-1 hover:text-palette-dark"
-                    to={`/products/${item.product._id}`}
-                  >
-                    {item.product.name}
-                  </Link>
-                </td>
-                <td className="px-4 py-4 font-medium font-primary sm:px-6">
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    id="variant-quantity"
-                    name="variant-quantity"
-                    min="1"
-                    step="1"
-                    value={item.quantity}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handlersUpdateCart(e, item.product._id)
-                    }
-                    className="w-16 text-gray-900 border border-gray-300 rounded-sm form-input focus:border-palette-light focus:ring-palette-light"
-                  />
-                </td>
-                <td className="px-4 py-4 font-medium font-primary sm:px-6">
-                  {item.product.quantity}
-                </td>
-                <td className="hidden px-4 py-4 text-base font-light font-primary sm:px-6 sm:table-cell">
-                  <Price
-                    currency="$"
-                    num={item.product.price}
-                    numSize="text-lg"
-                  />
-                </td>
-                <td className="px-4 py-4 font-medium font-primary sm:px-6">
-                  <button
-                    aria-label="delete-item"
-                    className=""
-                    onClick={(e: MouseEvent<HTMLButtonElement>) =>
-                      handlersDeleteCart(e, item.product._id)
-                    }
-                  >
-                    <FontAwesomeIcon
-                      // @ts-ignore
-                      icon={faTimes}
-                      className="w-8 h-8 p-1 border text-palette-primary border-palette-primary hover:bg-palette-lighter"
+          {cart && cart?.products.length
+            ? cart?.products.map((item, index) => (
+                <tr
+                  key={index}
+                  className="text-sm text-center text-gray-600 sm:text-base"
+                >
+                  <td className="flex items-center px-4 py-4 font-medium font-primary sm:px-6">
+                    <img
+                      src={item.product.imagePaths[0].url}
+                      alt={item.product.name}
+                      height={64}
+                      width={64}
+                      className={`hidden sm:inline-flex`}
                     />
-                  </button>
-                </td>
-              </tr>
-            )) : null}
-          {resultSubtotal === 0 ? null : (
+                    <Link
+                      className="pt-1 hover:text-palette-dark"
+                      to={`/products/${item.product._id}`}
+                    >
+                      {item.product.name}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-4 font-medium font-primary sm:px-6">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      id="variant-quantity"
+                      name="variant-quantity"
+                      min="1"
+                      step="1"
+                      value={item.quantity}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handlersUpdateCart(e, item.product._id)
+                      }
+                      className="w-16 text-gray-900 border border-gray-300 rounded-sm form-input focus:border-palette-light focus:ring-palette-light"
+                    />
+                  </td>
+                  <td className="px-4 py-4 font-medium font-primary sm:px-6">
+                    {item.product.quantity}
+                  </td>
+                  <td className="hidden px-4 py-4 text-base font-light font-primary sm:px-6 sm:table-cell">
+                    <Price
+                      currency="$"
+                      num={item.product.price}
+                      numSize="text-lg"
+                    />
+                  </td>
+                  <td className="px-4 py-4 font-medium font-primary sm:px-6">
+                    <button
+                      aria-label="delete-item"
+                      className=""
+                      onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                        handlersDeleteCart(e, item.product._id)
+                      }
+                    >
+                      <FontAwesomeIcon
+                        // @ts-ignore
+                        icon={faTimes}
+                        className="w-8 h-8 p-1 border text-palette-primary border-palette-primary hover:bg-palette-lighter"
+                      />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            : null}
+          {resultSubtotal === "0.00" ? null : (
             <tr className="text-center">
               <td></td>
               <td className="px-4 py-4 text-base font-semibold text-gray-600 uppercase font-primary sm:px-6">

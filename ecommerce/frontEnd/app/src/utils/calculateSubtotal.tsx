@@ -7,5 +7,5 @@ export const calculateSubtotal = (cart: IDataFetchCart) => {
       subtotal += item.product.price * item.quantity;
     });
   }
-  return subtotal;
+  return subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
 };
