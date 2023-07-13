@@ -32,7 +32,7 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const { user, login, logout } = useAuth();
   const [cart, setCart] = useState<IDataFetchCart | null>(null);
   const [watchCart, setWatchCart] = useState<string | null>(null);
-  const [quantity, setQuantity] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(1);
   const [loadingCart, setLoadingCart] = useState<boolean>(false);
   const navigate = useNavigate();
 

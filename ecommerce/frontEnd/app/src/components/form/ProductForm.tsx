@@ -29,8 +29,6 @@ const ProductForm = (props: IProductForm) => {
   const [quantity, setQuantity] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(null);
 
-  console.log("useQuantity", useQuantity);
-
   const updateQuantity = useCallback((e) => {
     if (e === "") {
       useSetQuantity(0);
@@ -38,6 +36,12 @@ const ProductForm = (props: IProductForm) => {
       useSetQuantity(Math.floor(e));
     }
   }, []);
+
+  useEffect(() => {
+    useSetQuantity(1)
+    return () => {}
+  }, [])
+  
 
   const funcCheckAuth = useCallback(async () => {
     if (user && user.role) {
@@ -49,11 +53,6 @@ const ProductForm = (props: IProductForm) => {
     funcCheckAuth();
     return () => {};
   }, [funcCheckAuth]);
-
-  useEffect(() => {
-    useSetQuantity(productQuantity);
-    return () => {};
-  }, [productQuantity]);
 
   const handleAddToCart = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
@@ -92,6 +91,7 @@ const ProductForm = (props: IProductForm) => {
             className="w-16 text-gray-900 border border-gray-300 rounded-sm form-input focus:border-palette-light focus:ring-palette-light"
           />
         </div>
+        <p className=" text-lg text-black">Number of items: {productQuantity}</p>
       </div>
       <button
         className={
