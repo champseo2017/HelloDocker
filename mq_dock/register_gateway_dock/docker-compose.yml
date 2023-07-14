@@ -8,8 +8,8 @@ services:
     environment:
       - NODE_ENV=dev
     restart: always
-    ports:
-      - "7001:8000"
+    # ports:
+    #   - "7001:8000"
     networks:
       - microservice_network
       - default
@@ -21,7 +21,7 @@ services:
     container_name: register_nginx
     build: nginx/
     ports:
-      - "80:80"
+      - "7001:80"
     depends_on:
       - register
     networks:

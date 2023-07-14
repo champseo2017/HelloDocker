@@ -2,6 +2,10 @@ require("dotenv").config();
 const amqp = require("amqplib/callback_api");
 const nodemailer = require("nodemailer");
 
+console.log("process.env.RELAY_USERNAME", process.env.RELAY_USERNAME)
+
+console.log("process.env.RELAY_PASSWORD", process.env.RELAY_PASSWORD)
+
 function sendEmail(id, firstname, lastname, email) {
   let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
